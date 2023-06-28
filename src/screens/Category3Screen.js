@@ -131,7 +131,11 @@ class Category3 extends PureComponent {
           cartIcon={true}
           navigation={this.props.navigation}
         />
-        <View style={styles.container}>
+        <ScrollView style={styles.container}>
+          <Image
+            source={require('../images/newImages/mrcado.jpg')}
+            style={styles.headerImg}
+          />
           <Text style={styles.accountTxt}>Account</Text>
           <Text style={styles.signTxt}>
             Login/Sign in for the best experience
@@ -184,7 +188,7 @@ class Category3 extends PureComponent {
               </View>
             ))}
           </ScrollView>
-        </View>
+        </ScrollView>
       </View>
     );
   }
@@ -265,7 +269,8 @@ const styles = StyleSheet.create({
   },
 
   container: {
-    padding: 20,
+    padding: 10,
+    marginBottom: 60,
   },
 
   loginBtn: {
@@ -293,6 +298,11 @@ const styles = StyleSheet.create({
     width: 100,
     height: 70,
     marginRight: 20,
+  },
+  headerImg: {
+    width: 380,
+    height: 200,
+    marginBottom: 25,
   },
   subContainer: {},
   subItem: {

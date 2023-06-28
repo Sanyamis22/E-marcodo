@@ -111,6 +111,41 @@ const PersonalInformationScreen = ({navigation}) => {
             </Text>
           </View>
         </TouchableOpacity>
+        <TouchableOpacity
+          key={2}
+          style={{}}
+          onPress={() => navigation.navigate('Wallet', {})}>
+          <View
+            key={2}
+            style={{
+              shadowRadius: 5,
+              shadowColor: 'balck',
+              shadowOffset: 2,
+              elevation: 2,
+              opacity: 1,
+              flexDirection: 'row',
+              marginBottom: 10,
+              backgroundColor: 'white',
+              paddingHorizontal: 20,
+            }}>
+            <Image
+              style={{width: 50, height: 65, backgroundColor: 'white'}}
+              source={require('../images/newImages/order_yellow.png')}
+              resizeMethod='auto'
+            />
+            <Text
+              style={{
+                fontSize: 22,
+                color: 'black',
+                alignSelf: 'center',
+                flex: 1,
+                textAlign: 'center',
+                fontWeight: 'bold',
+              }}>
+              Order
+            </Text>
+          </View>
+        </TouchableOpacity>
         <TouchableOpacity key={3} style={{}} onPress={() => {}}>
           <View
             key={3}
@@ -126,8 +161,8 @@ const PersonalInformationScreen = ({navigation}) => {
               paddingHorizontal: 20,
             }}>
             <Image
-              style={{width: 50, height: 65}}
-              source={require('../images/newImages/timeline_yellow.png')}
+              style={{width: 60, height: 65, backgroundColor: 'white'}}
+              source={require('../images/newImages/history_yellow.png')}
             />
             <Text
               style={{

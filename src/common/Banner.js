@@ -131,7 +131,7 @@ class SwiperBanner extends PureComponent {
                   paginationStyleItem={styles.bannerOnePagination}>
                   {this.bannersRender([styles.imageStyle, {
                     height: Dimensions.get('window').height * 0.25,
-                    borderRadius: appTextStyle.customRadius - 4
+                    // borderRadius: appTextStyle.customRadius - 4
                   }])}
                 </SwiperFlatList>
               </View>
@@ -149,7 +149,7 @@ class SwiperBanner extends PureComponent {
                   paginationStyleItem={styles.bannerTwoPagination}>
                   {this.bannersRender([styles.imageStyle, {
                     height: Dimensions.get('window').height * 0.25,
-                    borderRadius: appTextStyle.customRadius - 4
+                    // borderRadius: appTextStyle.customRadius - 4
                   }])}
                 </SwiperFlatList>
               </View>
@@ -172,7 +172,7 @@ class SwiperBanner extends PureComponent {
                   paginationStyleItem={styles.bannerTwoPagination}>
                   {this.bannersRender([styles.imageStyle, {
                     height: Dimensions.get('window').height * 0.25,
-                    borderRadius: appTextStyle.customRadius - 4,
+                    // borderRadius: appTextStyle.customRadius - 4,
                     width: WIDTH
                   }])}
                 </SwiperFlatList>
@@ -260,7 +260,7 @@ const styles = StyleSheet.create({
   imageStyle: {
     height: Dimensions.get('window').height * 0.23,
     width: WIDTH * 0.92,
-    borderRadius: appTextStyle.customRadius - 7
+    // borderRadius: appTextStyle.customRadius - 7
   },
   loaderTitleStyle: {
     height: 190,
@@ -280,7 +280,7 @@ const styles = StyleSheet.create({
   },
   bannerTwoPagination: {
     width: 15,
-    borderRadius: 5 / 2,
+    // borderRadius: 5 / 2,
     height: 7,
     marginLeft: 3,
     marginRight: 3,
