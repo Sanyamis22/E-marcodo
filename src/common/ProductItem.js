@@ -247,5 +247,6 @@ const styles = StyleSheet.create({
   cartBtnText: {
     textAlign: 'center',
     color: 'white',
+    fontSize: 10
   },
 });
