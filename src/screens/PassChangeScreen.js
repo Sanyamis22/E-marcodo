@@ -160,7 +160,6 @@ class CreateAccount extends PureComponent {
           style={{
             flex: 1,
             backgroundColor: themeStyle.backgroundColor,
-
             justifyContent: 'space-between',
             alignItems: 'center'
           }}>

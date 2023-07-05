@@ -26,7 +26,7 @@ const initialState = {
   hotProducts: [],
   pdRelatedProducts: [],
   cartRelatedProducts: [],
-  topsellerProducts: [],
+  topsellerProducts: [], 
   featuredProducts: [],
   onSaleProducts: []
 

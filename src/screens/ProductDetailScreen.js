@@ -13,23 +13,20 @@ import {createSelector} from 'reselect';
 import Header from '../common/HeaderCustom';
 import markedIcon from '../images/rate_marked.png';
 import unmarkedIcon from '../images/rate_unmarked.png';
+import {getThumbnailImage} from '../common/WooComFetch';
 
 class ProductDetailScreen extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      title: 'SAFLON GRANITE POT WITH STEEL LID',
-      imgLink: require('../images/granite_pot.png'),
+      title: this.props.productData[0]?.detail[0].title,
+      imgLink: this.props.productData[0]?.product_gallary?.gallary_name,
       subtitle: 'Saflon Granite Pot With Steel Lid',
       price: 10.99,
       kind: 'GSA016',
-      smallImageList: [
-        require('../images/granite_pot.png'),
-        require('../images/granite_pot.png'),
-      ],
+      smallImageList: this.props.productData[0]?.product_gallary?.gallary_name,
       delivery: 'Delivery On Tuesday, January 1.',
-      description:
-        'Saflon Product Made From Pure 4.00MM Aluminum Discs, 99% AI. And 1% Mixed Of (Nickle, Cupper, Chrome And Gold)\nNon-stick for healthy cooking and easy to clean\nFor great cook and elegant, classic and save serving\nCooking with little oil for healty diet\nBottom provides a stable heat distribution and rapidly heating up, saves time and energy\nSuitable for gas, ceramic, electric, halogen or inducting oven',
+      description: this.props.productData[0]?.detail[0].desc,
       reviews: [
         {
           avatar: '',
@@ -60,7 +57,8 @@ class ProductDetailScreen extends Component {
     }
   }
 
-  render() {
+  render({productData} = this.props) {
+    console.log('it==>em', this.props.productData);
     return (
       <View
         style={{
@@ -69,7 +67,7 @@ class ProductDetailScreen extends Component {
           borderRadius: 5,
         }}>
         <ScrollView style={styles.container}>
-          <Text>Kitchen/Cookingwear/</Text>
+          <Text>{this.props.productData[0]?.seo_desc}</Text>
           <Text style={styles.title}>{this.state.title}</Text>
           <View style={styles.productImages}>
             <SwiperFlatList
@@ -93,33 +91,44 @@ class ProductDetailScreen extends Component {
                       key={index}
                       style={styles.productImg}
                       resizeMode={'cover'}
-                      source={this.state.imgLink}
+                      source={{
+                        uri: getThumbnailImage() + this.state.imgLink,
+                      }}
                     />
                   );
                 })}
             </SwiperFlatList>
           </View>
           <Text style={styles.subtitle}>{this.state.subtitle}</Text>
-          <Text style={styles.subtitle}>As low as KWD {this.state.price}</Text>
-          <Text style={styles.subtitle}>In Stock</Text>
-          <Text style={styles.subtitle}>SKU {this.state.kind}</Text>
+          <Text style={styles.subtitle}>
+            As low as KWD {this.props.productData[0]?.product_price}
+          </Text>
+          <Text style={styles.subtitle}>
+            In Stock {this.props.productData[0]?.stock?.stock_in}
+          </Text>
+          <Text style={styles.subtitle}>
+            SKU {this.props.productData[0]?.product_sku}
+          </Text>
           <View style={{marginTop: 20}}>
             <Text style={[styles.subtitle, {marginBottom: 5}]}>Color</Text>
             <View style={styles.smallContainer}>
-              {this.state.smallImageList.map((item, index) => (
-                <View
-                  key={index}
-                  style={[
-                    styles.smallImageItem,
-                    styles.borderShadow,
-                    {
-                      backgroundColor: this.props.themeStyle
-                        .secondryBackgroundColor,
-                    },
-                  ]}>
-                  <Image source={item} style={styles.smallImage} />
-                </View>
-              ))}
+              <View
+                // key={index}
+                style={[
+                  styles.smallImageItem,
+                  styles.borderShadow,
+                  {
+                    backgroundColor: this.props.themeStyle
+                      .secondryBackgroundColor,
+                  },
+                ]}>
+                <Image
+                  source={{
+                    uri: getThumbnailImage() + this.state.smallImageList,
+                  }}
+                  style={styles.smallImage}
+                />
+              </View>
             </View>
           </View>
           <View>
@@ -436,7 +445,7 @@ const styles = StyleSheet.create({
   cartBtnText: {
     textAlign: 'center',
     color: 'white',
-    fontSize: 14
+    fontSize: 14,
   },
   buyBtn: {
     backgroundColor: 'gray',

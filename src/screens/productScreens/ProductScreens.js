@@ -30,7 +30,7 @@ import Spinner from 'react-native-loading-spinner-overlay';
 import Header from '../../common/HeaderCustom';
 import {connect} from 'react-redux';
 import CardTem from '../../common/CardTemplate';
-import {Icon} from 'native-base';
+import {CardItem, Icon} from 'native-base';
 import Loader from 'react-native-easy-content-loader';
 import Banner from '../../common/Banner';
 import ImageLoad from '../../common/RnImagePlaceH';
@@ -43,7 +43,7 @@ import ProductDetailScreen from '../ProductDetailScreen';
 import {getThumbnailImage} from '../../common/WooComFetch';
 const WIDTH = Dimensions.get('window').width;
 const Width2 = WIDTH;
-class CategoryScreens extends Component {
+class ProductScreens extends Component {
   static navigationOptions = () => ({
     headerShown: false,
   });
@@ -64,7 +64,8 @@ class CategoryScreens extends Component {
       //
       page: 1,
       productColorCounter: 0,
-      subCategoryData: [],
+      subProductData: [],
+      productDetailsData: [],
       currentCategoryTitle: '',
     };
     this.toast = null;
@@ -199,17 +200,31 @@ class CategoryScreens extends Component {
     }
   }
 
-  _handleSubCategory(item) {
-    const newData = this.props.sortCategory.filter(data => {
-      if (item == data.parent) {
+  _handleSubProduct(item) {
+    const newData = this.props.products.filter(data => {
+      if (item == data.product_brand.brand_id) {
         return data;
       } else {
         this.noProductFun();
       }
     });
     this.setState({
-      subCategoryData: newData,
+      subProductData: newData,
       currentCategoryTitle: newData.parent_name,
+    });
+  }
+  _handleProductDetails(item) {
+    console.log('ProductID==>', item);
+    const newProductData = this.props.products.filter(data => {
+      if (item == data.product_id) {
+        return data;
+      } else {
+        this.noProductFun();
+      }
+    });
+    this.setState({
+      productDetailsData: newProductData,
+      isModalVisible: true,
     });
   }
 
@@ -380,8 +395,8 @@ class CategoryScreens extends Component {
                     .secondryBackgroundColor,
                   paddingTop: 20,
                 }}>
-                <CategoryHeading key={0} text="Home / Category 0" />
-                <ScrollView key={1} horizontal={true} style={{marginTop: 20}}>
+                <CategoryHeading key={0} text="Home / Product 0" />
+                {/* <ScrollView key={1} horizontal={true} style={{marginTop: 20}}>
                   {Array(10)
                     .fill(0)
                     .map((item, index) => {
@@ -403,13 +418,15 @@ class CategoryScreens extends Component {
                         </View>
                       );
                     })}
-                </ScrollView>
+                </ScrollView> */}
                 <ScrollView key={2} horizontal={true}>
-                  {this.props.sortCategory
+                  {this.props.products
                     .reduce((acc, curr) => {
                       if (
                         acc?.findIndex(
-                          item => item.parent_name == curr.parent_name,
+                          item =>
+                            item.product_brand.brand_id ==
+                            curr.product_brand.brand_id,
                         ) == -1
                       ) {
                         acc.push(curr);
@@ -424,7 +441,9 @@ class CategoryScreens extends Component {
                           style={{paddingBottom: 10, paddingLeft: 5}}>
                           <TouchableOpacity
                             onPress={() =>
-                              this._handleSubCategory(item.parent)
+                              this._handleSubProduct(
+                                item.product_brand.brand_id,
+                              )
                             }>
                             <View
                               style={{
@@ -447,14 +466,16 @@ class CategoryScreens extends Component {
                                 backgroundColor="transparent"
                                 color="transparent"
                                 source={{
-                                  uri: getThumbnailImage() + item.gallary,
+                                  uri:
+                                    getThumbnailImage() +
+                                    item.product_brand.gallary.name,
                                 }}
                               />
                             </View>
                           </TouchableOpacity>
                           <Text
                             style={{alignItems: 'center', textAlign: 'center'}}>
-                            {item.parent_name}
+                            {item.product_brand.brand_name}
                           </Text>
                         </View>
                       );
@@ -550,13 +571,13 @@ class CategoryScreens extends Component {
                   </Text>
                 </View>
                 <ScrollView key={8} style={{paddingHorizontal: 10}}>
-                  {this.state.subCategoryData?.map((item, index) => {
+                  {this.state.subProductData?.map((item, index) => {
                     return (
                       <TouchableOpacity
                         key={index + 300}
                         style={{paddingBottom: 5, paddingLeft: 5}}
                         onLongPress={() =>
-                          this.setState({isModalVisible: true})
+                          this._handleProductDetails(item.product_id)
                         }>
                         <ProductItem
                           navigation={this.props.navigation}
@@ -565,15 +586,27 @@ class CategoryScreens extends Component {
                             option1: 'Best Seller',
                             option2: 'New Arrival',
                           }}
-                          imgLink={{uri: getThumbnailImage() + item.gallary}}
-                          title={item.name}
-                          priceOld={10.99}
-                          priceCurrent={5.99}
+                          imgLink={{
+                            uri:
+                              getThumbnailImage() +
+                              item.product_gallary.gallary_name,
+                          }}
+                          title={item.detail[0].title}
+                          priceOld={item.product_price}
+                          priceCurrent={item.product_discount_price}
                           favorite={false}
                           grid={false}
                           smallImageList={[
-                            {uri: getThumbnailImage() + item.gallary},
-                            {uri: getThumbnailImage() + item.gallary},
+                            {
+                              uri:
+                                getThumbnailImage() +
+                                item.product_gallary_detail[0].gallary_name,
+                            },
+                            {
+                              uri:
+                                getThumbnailImage() +
+                                item.product_gallary_detail[0].gallary_name,
+                            },
                           ]}
                           time={{days: 17, hrs: 17, mins: 17, seconds: 17}}
                           onAddCart={() => this.handleAddCart()}
@@ -601,9 +634,12 @@ class CategoryScreens extends Component {
           animationType={'fade'}>
           <View style={styles.modalContainer}>
             <TouchableWithoutFeedback
-              onPress={() => this.setState({isModalVisible: false})}>
+              onPress={() =>
+                this.setState({isModalVisible: false})
+              }>
               <View style={styles.modalOverlay} />
             </TouchableWithoutFeedback>
+            {console.log('MODAL==>>', this.state.productDetailsData)}
             <View
               style={[
                 {
@@ -624,7 +660,7 @@ class CategoryScreens extends Component {
               />
             </View>
             <View style={styles.modalDetailContainer}>
-              <ProductDetailScreen />
+              <ProductDetailScreen productData={this.state.productDetailsData} />
             </View>
           </View>
         </Modal>
@@ -769,7 +805,7 @@ const mapStateToProps = state => ({
 export default connect(
   mapStateToProps,
   mapDispatchToProps,
-)(CategoryScreens);
+)(ProductScreens);
 /// /////////////////////////////////////////////
 const styles = StyleSheet.create({
   loaderContainer: {

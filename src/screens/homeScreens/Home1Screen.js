@@ -41,6 +41,7 @@ import CategoryHeading from '../../common/CategoryHeading';
 import ProductItem from '../../common/ProductItem';
 import ProductDetailScreen from '../ProductDetailScreen';
 import {getThumbnailImage} from '../../common/WooComFetch';
+import Home5Screen from './Home5Screen';
 const WIDTH = Dimensions.get('window').width;
 const Width2 = WIDTH;
 class Newest extends Component {
@@ -64,6 +65,7 @@ class Newest extends Component {
       //
       page: 1,
       productColorCounter: 0,
+      parentArray: [],
     };
     this.toast = null;
   }
@@ -80,6 +82,11 @@ class Newest extends Component {
       }
     }
   };
+
+  // getUniqueCategoryNameBy(sortCategory, key) {
+  //   return [...new Map(sortCategory.map(item => [item[key], item])).values()];
+  // }
+  // array = this.getUniqueCategoryNameBy(this.props.sortCategory, 'parent_name');
 
   navigate = json => {
     // E
@@ -275,6 +282,7 @@ class Newest extends Component {
   );
 
   render() {
+    console.log('heheheh===<><><>', this.props.onSaleProducts);
     if (this.props.products.length > 0) {
       this.state.loading = false;
       this.state.timeValue = 400;
@@ -429,46 +437,57 @@ class Newest extends Component {
                 />
 
                 <ScrollView key={1} horizontal={true}>
-                  {this.props.sortCategory.map((item, index) => {
-                    console.log(
-                      '==============================================',
-                    );
-                    console.log('\n', JSON.stringify(item, null, 2));
-                    console.log(
-                      '==============================================',
-                    );
-                    return (
-                      <View
-                        key={index + 100}
-                        style={{paddingBottom: 10, paddingLeft: 5}}>
-                        <TouchableOpacity
-                          onPress={() => {
-                            this.props.navigation.navigate('CategoryScreens');
-                          }}>
-                          <View
-                            style={{
-                              width: 80,
-                              height: 80,
-                              justifyContent: 'center',
-                              borderWidth: 1,
-                              margin: 5,
+                  {this.props.sortCategory
+                    .reduce((acc, curr) => {
+                      if (
+                        acc?.findIndex(
+                          item => item.parent_name == curr.parent_name,
+                        ) == -1
+                      ) {
+                        acc.push(curr);
+                      }
+                      return acc;
+                    }, [])
+                    .map((item, index) => {
+                      console.log('===>>category', item);
+                      console.log('\n', JSON.stringify(item, null, 2));
+                      console.log(
+                        '==============================================',
+                      );
+                      return (
+                        <View
+                          key={index + 100}
+                          style={{paddingBottom: 10, paddingLeft: 5}}>
+                          <TouchableOpacity
+                            onPress={() => {
+                              this.props.navigation.navigate('CategoryScreens');
                             }}>
-                            <Image
-                              style={styles.imageStyle}
-                              placeholder={false}
-                              backgroundColor="transparent"
-                              color="transparent"
-                              source={{uri: getThumbnailImage() + item.gallary}}
-                            />
-                          </View>
-                        </TouchableOpacity>
-                        <Text
-                          style={{alignItems: 'center', textAlign: 'center'}}>
-                          {item.name}
-                        </Text>
-                      </View>
-                    );
-                  })}
+                            <View
+                              style={{
+                                width: 80,
+                                height: 80,
+                                justifyContent: 'center',
+                                borderWidth: 1,
+                                margin: 5,
+                              }}>
+                              <Image
+                                style={styles.imageStyle}
+                                placeholder={false}
+                                backgroundColor="transparent"
+                                color="transparent"
+                                source={{
+                                  uri: getThumbnailImage() + item.gallary,
+                                }}
+                              />
+                            </View>
+                          </TouchableOpacity>
+                          <Text
+                            style={{alignItems: 'center', textAlign: 'center'}}>
+                            {item.parent_name}
+                          </Text>
+                        </View>
+                      );
+                    })}
                 </ScrollView>
 
                 <View
@@ -487,48 +506,64 @@ class Newest extends Component {
                 />
 
                 <ScrollView key={1} horizontal={true}>
-                  {this.props.sortCategory.map((item, index) => {
-                    console.log(
-                      '==============================================',
-                    );
-                    console.log('\n', JSON.stringify(item, null, 2));
-                    console.log(
-                      '==============================================',
-                    );
-                    return (
-                      <View
-                        key={index + 100}
-                        style={{paddingBottom: 10, paddingLeft: 5}}>
-                        <TouchableOpacity
-                          onPress={() => {
-                            this.props.navigation.navigate('CategoryScreens');
-                          }}>
-                          <View
-                            style={{
-                              width: 80,
-                              height: 80,
-                              justifyContent: 'center',
-                              borderWidth: 1,
-                              margin: 5,
+                  {this.props.products
+                    .reduce((acc, curr) => {
+                      if (
+                        acc?.findIndex(
+                          item =>
+                            item.product_brand.brand_id ==
+                            curr.product_brand.brand_id,
+                        ) == -1
+                      ) {
+                        acc.push(curr);
+                      }
+                      return acc;
+                    }, [])
+                    .map((item, index) => {
+                      console.log(
+                        '==============================================',
+                      );
+                      console.log('\n', JSON.stringify(item, null, 2));
+                      console.log(
+                        '==============================================',
+                      );
+                      return (
+                        <View
+                          key={index + 100}
+                          style={{paddingBottom: 10, paddingLeft: 5}}>
+                          <TouchableOpacity
+                            onPress={() => {
+                              this.props.navigation.navigate('ProductScreens');
                             }}>
-                            <Image
-                              style={styles.imageStyle}
-                              placeholder={false}
-                              backgroundColor="transparent"
-                              color="transparent"
-                              source={{uri: getThumbnailImage() + item.gallary}}
-                            />
-                          </View>
-                        </TouchableOpacity>
-                        <Text
-                          style={{alignItems: 'center', textAlign: 'center'}}>
-                          {item.name}
-                        </Text>
-                      </View>
-                    );
-                  })}
+                            <View
+                              style={{
+                                width: 80,
+                                height: 80,
+                                justifyContent: 'center',
+                                borderWidth: 1,
+                                margin: 5,
+                              }}>
+                              <Image
+                                style={styles.imageStyle}
+                                placeholder={false}
+                                backgroundColor="transparent"
+                                color="transparent"
+                                source={{
+                                  uri:
+                                    getThumbnailImage() +
+                                    item.product_brand.gallary.name,
+                                }}
+                              />
+                            </View>
+                          </TouchableOpacity>
+                          <Text
+                            style={{alignItems: 'center', textAlign: 'center'}}>
+                            {item.product_brand.brand_name}
+                          </Text>
+                        </View>
+                      );
+                    })}
                 </ScrollView>
-
                 {/*<View key={2} style={{ width: '95%', height: 2, backgroundColor: 'black', alignSelf: 'center' }}></View>
 
                 <ScrollView key={4} horizontal={true}>
@@ -562,7 +597,7 @@ class Newest extends Component {
                     paddingHorizontal: 10,
                     paddingVertical: 5,
                   }}>
-                  <View
+                  {/* <View
                     key={0}
                     style={{
                       width: 80,
@@ -578,8 +613,30 @@ class Newest extends Component {
                       }}>
                       Offer
                     </Text>
-                  </View>
-                  <View
+                  </View> */}
+                  <TouchableOpacity
+                    onPress={() => {
+                      this.setState({selectedTab: '1'});
+                    }}
+                    style={{
+                      width: 80,
+                      height: 40,
+                      backgroundColor: 'red',
+                      justifyContent: 'center',
+                    }}>
+                    <Text
+                      style={{
+                        textAlign: 'center',
+                        color: 'white',
+                        fontSize: 10,
+                      }}>
+                      Offer
+                    </Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    onPress={() => {
+                      this.setState({selectedTab: '3'});
+                    }}
                     key={1}
                     style={{
                       width: 80,
@@ -595,8 +652,11 @@ class Newest extends Component {
                       }}>
                       New Arrival
                     </Text>
-                  </View>
-                  <View
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    onPress={() => {
+                      this.setState({selectedTab: '1'});
+                    }}
                     key={2}
                     style={{
                       width: 80,
@@ -612,8 +672,8 @@ class Newest extends Component {
                       }}>
                       Best Seller
                     </Text>
-                  </View>
-                  <View
+                  </TouchableOpacity>
+                  <TouchableOpacity
                     key={3}
                     style={{
                       width: 80,
@@ -629,7 +689,7 @@ class Newest extends Component {
                       }}>
                       Most liked
                     </Text>
-                  </View>
+                  </TouchableOpacity>
                 </View>
 
                 <View
@@ -647,7 +707,7 @@ class Newest extends Component {
                   </Text>
                 </View>
 
-                <ScrollView key={8} horizontal={this.props.gridFlag}>
+                {/* <ScrollView key={8} horizontal={this.props.gridFlag}>
                   {Array(10)
                     .fill(0)
                     .map((item, index) => {
@@ -681,7 +741,7 @@ class Newest extends Component {
                         </TouchableOpacity>
                       );
                     })}
-                </ScrollView>
+                </ScrollView> */}
 
                 {/* <View key={9} style={{ flexDirection: 'row', justifyContent: 'space-between', padding: 10 }}>
                   <Text key={0} style={{ color: 'black' }}>Deal Of the Day</Text>
@@ -709,6 +769,96 @@ class Newest extends Component {
                     </TouchableOpacity>
                   })}
                 </ScrollView> */}
+                <ScrollView>
+                  <View style={styles.screenContainer}>
+                    {this.state.selectedTab === '1' ? (
+                      <View style={styles.screenInnerContainer}>
+                        {this.props.topsellerProducts !== undefined ? (
+                          <FlatListView
+                            vertical={true}
+                            noOfCol={1}
+                            dataName={'topSelling'}
+                            viewButton={false}
+                            navigation={this.props.navigation}
+                            cardStyle={this.props.settings.home_style}
+                            tabArray={
+                              this.props.topsellerProducts !== undefined &&
+                              this.props.topsellerProducts !== null
+                                ? this.props.topsellerProducts
+                                : []
+                            }
+                          />
+                        ) : (
+                          this.noProductFun()
+                        )}
+                      </View>
+                    ) : this.state.selectedTab === '3' ? (
+                      <View style={styles.tabInnerContainer}>
+                        {this.props.featuredProducts !== undefined ? (
+                          <FlatListView
+                            vertical={true}
+                            noOfCol={1}
+                            dataName={'topSelling'}
+                            viewButton={false}
+                            navigation={this.props.navigation}
+                            cardStyle={this.props.settings.home_style}
+                            tabArray={
+                              this.props.featuredProducts !== undefined &&
+                              this.props.featuredProducts !== null
+                                ? this.props.featuredProducts
+                                : []
+                            }
+                          />
+                        ) : (
+                          this.noProductFun()
+                        )}
+                      </View>
+                    ) : (
+                      <View
+                        style={{
+                          justifyContent: 'center',
+                          alignItems: 'center',
+                        }}>
+                        {this.props.onSaleProducts !== undefined ? (
+                          <FlatListView
+                            vertical={true}
+                            noOfCol={1}
+                            dataName={'topSelling'}
+                            viewButton={false}
+                            navigation={this.props.navigation}
+                            cardStyle={this.props.settings.home_style}
+                            tabArray={
+                              this.props.onSaleProducts !== undefined &&
+                              this.props.onSaleProducts !== null
+                                ? this.props.onSaleProducts
+                                : []
+                            }
+                          />
+                        ) : (
+                          this.noProductFun()
+                        )}
+                      </View>
+                    )}
+                  </View>
+                  {this.props.hotProducts !== undefined ? (
+                    <FlatListView
+                      vertical={true}
+                      noOfCol={1}
+                      dataName={'topSelling'}
+                      viewButton={false}
+                      navigation={this.props.navigation}
+                      cardStyle={this.props.settings.card_style}
+                      tabArray={
+                        this.props.hotProducts !== undefined &&
+                        this.props.hotProducts !== null
+                          ? this.props.hotProducts
+                          : []
+                      }
+                    />
+                  ) : (
+                    this.noProductFun()
+                  )}
+                </ScrollView>
               </View>
             </View>
           }
@@ -795,13 +945,15 @@ const getTheme = state => state.appConfig.themeStyle;
 const getLanguage = state => state.appConfig.languageJson;
 const getGridFlag = state => state.appConfig.gridFlag;
 const getAppinPro = state => state.appConfig.appInProduction;
-
+const getRealCategories = state => state.getCategories.categories;
 const getCategories = state => state.getCategories.sortCategory;
 const getBanners = state => state.bannersData.banners;
 const getSettings = state => state.settingsCall.settings;
 const getproductsArray = state => state.productsData.products;
 const getHotProductsArray = state => state.productsData.hotProducts;
 const gettopsellerProductsArray = state => state.productsData.topsellerProducts;
+const getonSaleProductsArray = state => state.productsData.onSaleProducts;
+console.log('BCBCBCB===<>', getonSaleProductsArray);
 
 const gettopsellerProductsArrayFun = createSelector(
   [gettopsellerProductsArray],
@@ -838,10 +990,24 @@ const getBannersFun = createSelector(
   },
 );
 
+const getonSaleProductsArrayFun = createSelector(
+  [getonSaleProductsArray],
+  getonSaleProductsArray => {
+    return getonSaleProductsArray;
+  },
+);
+
 const getCategoriesFun = createSelector(
   [getCategories],
   getCategories => {
     return getCategories;
+  },
+);
+
+const getRealCategoriesFun = createSelector(
+  [getRealCategories],
+  getRealCategories => {
+    return getRealCategories;
   },
 );
 
@@ -876,6 +1042,7 @@ const getSettingsFun = createSelector(
 const mapStateToProps = state => ({
   themeStyle: getThemeFun(state),
   language: getLanguageFun(state),
+  category: getRealCategoriesFun(state),
   sortCategory: getCategoriesFun(state),
   banners: getBannersFun(state),
   settings: getSettingsFun(state),
@@ -884,6 +1051,7 @@ const mapStateToProps = state => ({
   hotProducts: getHotProductsArrayFun(state),
   topsellerProducts: gettopsellerProductsArrayFun(state),
   gridFlag: getGridFlagFun(state),
+  onSaleProducts: getonSaleProductsArrayFun(state),
 });
 
 /// //////////////////////////////////////////
@@ -1034,5 +1202,21 @@ const styles = StyleSheet.create({
     marginTop: 40,
     marginBottom: 30,
     alignSelf: 'center',
+  },
+  screenContainer: {
+    flex: 1,
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  screenInnerContainer: {
+    flex: 1,
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  tabInnerContainer: {
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
