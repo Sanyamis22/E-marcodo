@@ -25,6 +25,7 @@ import SearchFilterClass from '../../../common/SearchFilterClass';
 import ProductDetailScreen from '../../../screens/ProductDetailScreen';
 import Home5Screen from '../../../screens/homeScreens/Home5Screen';
 import ProductScreens from '../../../screens/productScreens/ProductScreens';
+import CategoryProductDetailScreen from '../../../screens/CategoryProductDetailScreen';
 
 /// ////////////////////////////////////////////////// Home Stack Start
 const HomeStackNavigator = createStackNavigator({
@@ -37,6 +38,14 @@ const HomeStackNavigator = createStackNavigator({
   },
   ProductDetailScreen: {
     screen: ProductDetailScreen,
+    navigationOptions: () => ({
+      gestureEnabled: false,
+      headerShown: true,
+      headerTitle: '',
+    }),
+  },
+  CategoryProductDetailScreen: {
+    screen: CategoryProductDetailScreen,
     navigationOptions: () => ({
       gestureEnabled: false,
       headerShown: true,

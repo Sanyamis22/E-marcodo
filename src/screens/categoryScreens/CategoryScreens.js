@@ -39,8 +39,8 @@ import CategoryFlatList from '../../common/CategoriesFlatList';
 import theme, {appTextStyle} from '../../common/Theme.style';
 import CategoryHeading from '../../common/CategoryHeading';
 import ProductItem from '../../common/ProductItem';
-import ProductDetailScreen from '../ProductDetailScreen';
 import {getThumbnailImage} from '../../common/WooComFetch';
+import CategoryProductDetailScreen from '../CategoryProductDetailScreen';
 const WIDTH = Dimensions.get('window').width;
 const Width2 = WIDTH;
 class CategoryScreens extends Component {
@@ -65,6 +65,7 @@ class CategoryScreens extends Component {
       page: 1,
       productColorCounter: 0,
       subCategoryData: [],
+      categoryProductDetail: [],
       currentCategoryTitle: '',
     };
     this.toast = null;
@@ -210,6 +211,19 @@ class CategoryScreens extends Component {
     this.setState({
       subCategoryData: newData,
       currentCategoryTitle: newData.parent_name,
+    });
+  }
+  _handleCategoryProductDetails(item) {
+    const newCategoryProductData = this.props.sortCategory.filter(data => {
+      if (item == data.id) {
+        return data;
+      } else {
+        this.noProductFun();
+      }
+    });
+    this.setState({
+      categoryProductDetail: newCategoryProductData,
+      isModalVisible: true,
     });
   }
 
@@ -381,7 +395,7 @@ class CategoryScreens extends Component {
                   paddingTop: 20,
                 }}>
                 <CategoryHeading key={0} text="Home / Category 0" />
-                <ScrollView key={1} horizontal={true} style={{marginTop: 20}}>
+                {/* <ScrollView key={1} horizontal={true} style={{marginTop: 20}}>
                   {Array(10)
                     .fill(0)
                     .map((item, index) => {
@@ -403,7 +417,7 @@ class CategoryScreens extends Component {
                         </View>
                       );
                     })}
-                </ScrollView>
+                </ScrollView> */}
                 <ScrollView key={2} horizontal={true}>
                   {this.props.sortCategory
                     .reduce((acc, curr) => {
@@ -417,7 +431,7 @@ class CategoryScreens extends Component {
                       return acc;
                     }, [])
                     .map((item, index) => {
-                      console.log('===>>sortCategory', item);
+                      console.log('===>>sortCategory', this.props.sortCategory);
                       return (
                         <View
                           key={index + 100}
@@ -551,12 +565,13 @@ class CategoryScreens extends Component {
                 </View>
                 <ScrollView key={8} style={{paddingHorizontal: 10}}>
                   {this.state.subCategoryData?.map((item, index) => {
+                    console.log('subCategory===>>>', item);
                     return (
                       <TouchableOpacity
                         key={index + 300}
                         style={{paddingBottom: 5, paddingLeft: 5}}
                         onLongPress={() =>
-                          this.setState({isModalVisible: true})
+                          this._handleCategoryProductDetails(item.id)
                         }>
                         <ProductItem
                           navigation={this.props.navigation}
@@ -604,6 +619,7 @@ class CategoryScreens extends Component {
               onPress={() => this.setState({isModalVisible: false})}>
               <View style={styles.modalOverlay} />
             </TouchableWithoutFeedback>
+            {console.log('MODAL==>>', this.state.categoryProductDetail)}
             <View
               style={[
                 {
@@ -624,7 +640,9 @@ class CategoryScreens extends Component {
               />
             </View>
             <View style={styles.modalDetailContainer}>
-              <ProductDetailScreen />
+              <CategoryProductDetailScreen
+                categoryProductData={this.state.categoryProductDetail}
+              />
             </View>
           </View>
         </Modal>
