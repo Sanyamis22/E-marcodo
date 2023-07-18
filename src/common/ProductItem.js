@@ -18,54 +18,92 @@ class ProductItem extends Component {
       grid,
       smallImageList,
       time,
+      headerShown,
     } = this.props,
   ) {
     return (
       <View style={grid ? styles.container : styles.container1}>
         <View style={grid ? {} : {width: '50%'}}>
-          <View
-            style={{
-              flexDirection: 'row',
-              justifyContent: 'space-between',
-              paddingHorizontal: 2,
-              paddingVertical: 2,
-              height: 20,
-            }}>
+          {headerShown == true ? (
             <View
               style={{
-                width: 55,
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+                paddingHorizontal: 2,
+                paddingVertical: 2,
                 height: 20,
-                backgroundColor: 'red',
-                justifyContent: 'center',
               }}>
-              <Text style={{textAlign: 'center', color: 'white', fontSize: 10}}>
-                {header.rate}%
-              </Text>
+              <View
+                style={{
+                  width: 55,
+                  height: 20,
+                  backgroundColor: 'red',
+                  justifyContent: 'center',
+                }}>
+                <Text
+                  style={{textAlign: 'center', color: 'white', fontSize: 10}}>
+                  {header.rate}%
+                </Text>
+              </View>
+              <View
+                style={{
+                  width: 55,
+                  height: 20,
+                  backgroundColor: 'orange',
+                  justifyContent: 'center',
+                }}>
+                <Text
+                  style={{textAlign: 'center', color: 'white', fontSize: 10}}>
+                  {header.option1}
+                </Text>
+              </View>
+              <View
+                style={{
+                  width: 55,
+                  height: 20,
+                  backgroundColor: 'black',
+                  justifyContent: 'center',
+                }}>
+                <Text
+                  style={{textAlign: 'center', color: 'white', fontSize: 10}}>
+                  {header.option2}
+                </Text>
+              </View>
             </View>
+          ) : (
             <View
               style={{
-                width: 55,
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+                paddingHorizontal: 2,
+                paddingVertical: 2,
                 height: 20,
-                backgroundColor: 'orange',
-                justifyContent: 'center',
               }}>
-              <Text style={{textAlign: 'center', color: 'white', fontSize: 10}}>
-                {header.option1}
-              </Text>
+              <View
+                style={{
+                  width: 55,
+                  height: 20,
+                  justifyContent: 'center',
+                }}
+              />
+              <View
+                style={{
+                  width: 55,
+                  height: 20,
+                  justifyContent: 'center',
+                }}
+              />
+              <View
+                style={{
+                  width: 55,
+                  height: 20,
+                  justifyContent: 'center',
+                }}
+              />
             </View>
-            <View
-              style={{
-                width: 55,
-                height: 20,
-                backgroundColor: 'black',
-                justifyContent: 'center',
-              }}>
-              <Text style={{textAlign: 'center', color: 'white', fontSize: 10}}>
-                {header.option2}
-              </Text>
-            </View>
-          </View>
-          <View style={{height: 130}}>
+          )}
+
+          <View style={{height: 130, marginTop: 8}}>
             <SwiperFlatList
               index={0}
               showPagination
@@ -140,11 +178,18 @@ class ProductItem extends Component {
           {/* <TouchableOpacity style={styles.cartBtn} onPress={() => this.handleAddCart()}> */}
           {/* <TouchableOpacity style={styles.cartBtn} onPress={() => navigation.navigate('ProductDetailScreen')}> */}
           {grid ? (
-            <TouchableOpacity
-              style={styles.addCartBtn}
-              onPress={() => console.log('Add to cart')}>
-              <Text style={styles.cartBtnText}>Add To Cart</Text>
-            </TouchableOpacity>
+            <View>
+              <TouchableOpacity
+                style={styles.addCartBtn}
+                onPress={() => console.log('Add to cart')}>
+                <Text style={styles.cartBtnText}>Add To Cart</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.cart2Btn}
+                onPress={() => console.log('Buy Now')}>
+                <Text style={styles.cartBtnText}>Buy Now</Text>
+              </TouchableOpacity>
+            </View>
           ) : (
             <View style={{flexDirection: 'row'}}>
               <TouchableOpacity
@@ -179,8 +224,8 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = dispatch => ({
   // handleAddCart: this.props.handleAddCart(),
   // handleAddCart: () => {
-  //     this.props.handleAddCart()
-  // }
+  //   this.props.handleAddCart();
+  // },
 });
 
 export default connect(
@@ -228,12 +273,19 @@ const styles = StyleSheet.create({
     marginHorizontal: 2,
     justifyContent: 'center',
   },
+  cart2Btn: {
+    width: '100%',
+    backgroundColor: 'orange',
+    // alignSelf: 'center',
+    height: 22,
+    justifyContent: 'center',
+  },
   addCartBtn: {
     width: '100%',
-    backgroundColor: '#fdad10',
+    backgroundColor: 'black',
     // alignSelf: 'center',
     height: 25,
-    marginHorizontal: 2,
+    marginBottom: 3,
     justifyContent: 'center',
   },
   add2CartBtn: {
@@ -247,6 +299,6 @@ const styles = StyleSheet.create({
   cartBtnText: {
     textAlign: 'center',
     color: 'white',
-    fontSize: 10
+    fontSize: 10,
   },
 });

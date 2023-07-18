@@ -19,14 +19,14 @@ class CategoryProductDetailScreen extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      title: this.props.categoryProductData[0].name,
-      imgLink: this.props.categoryProductData[0].gallary,
+      title: this.props.categoryProductData[0]?.name,
+      imgLink: this.props.categoryProductData[0]?.gallary,
       subtitle: 'Saflon Granite Pot With Steel Lid',
       price: 10.99,
       kind: 'GSA016',
-      smallImageList: this.props.categoryProductData[0].icon,
+      smallImageList: this.props.categoryProductData[0]?.icon,
       delivery: 'Delivery On Tuesday, January 1.',
-      description: this.props.categoryProductData[0].desc,
+      description: this.props.categoryProductData[0]?.desc,
       reviews: [
         {
           avatar: '',
@@ -67,7 +67,7 @@ class CategoryProductDetailScreen extends Component {
           borderRadius: 5,
         }}>
         <ScrollView style={styles.container}>
-          <Text>{this.props.categoryProductData[0].name}</Text>
+          <Text>{this.props.categoryProductData[0]?.name}</Text>
           <Text style={styles.title}>{this.state.title}</Text>
           <View style={styles.productImages}>
             <SwiperFlatList

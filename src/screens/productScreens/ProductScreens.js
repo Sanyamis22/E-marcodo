@@ -41,6 +41,7 @@ import CategoryHeading from '../../common/CategoryHeading';
 import ProductItem from '../../common/ProductItem';
 import ProductDetailScreen from '../ProductDetailScreen';
 import {getThumbnailImage} from '../../common/WooComFetch';
+import SelectDropdown from 'react-native-select-dropdown';
 const WIDTH = Dimensions.get('window').width;
 const Width2 = WIDTH;
 class ProductScreens extends Component {
@@ -67,6 +68,13 @@ class ProductScreens extends Component {
       subProductData: [],
       productDetailsData: [],
       currentCategoryTitle: '',
+      sort: [
+        {name: 'Low-to-High', id: 0},
+        {name: 'High-to-Low', id: 1},
+        {name: 'A-Z', id: 2},
+        {name: 'Z-A', id: 3},
+      ],
+      filter: ['Color', 'Price', 'Ram', 'Size'],
     };
     this.toast = null;
   }
@@ -83,6 +91,48 @@ class ProductScreens extends Component {
       }
     }
   };
+
+  _sortProducts(id) {
+    let sortData;
+    if (id == 0) {
+      sortData = this.state.subProductData?.sort((a, b) => {
+        return a.product_price - b.product_price;
+      });
+    } else if (id == 1) {
+      sortData = this.state.subProductData?.sort((a, b) => {
+        return b.product_price - a.product_price;
+      });
+    } else if (id == 2) {
+      sortData = this.state.subProductData?.sort((a, b) => {
+        const A = a.detail[0].title.toUpperCase();
+        const B = b.detail[0].title.toUpperCase();
+        if (A < B) {
+          return -1;
+        } else if (A > B) {
+          return 1;
+        } else {
+          return 0;
+        }
+      });
+    } else if (id == 3) {
+      sortData = this.state.subProductData?.sort((a, b) => {
+        const A = a.detail[0].title.toUpperCase();
+        const B = b.detail[0].title.toUpperCase();
+        if (A > B) {
+          return -1;
+        } else if (A < B) {
+          return 1;
+        } else {
+          return 0;
+        }
+      });
+    }
+    this.setState({
+      subProductData: sortData,
+    });
+
+    console.log('sonika mam k liye ===>>', this.state.subProductData);
+  }
 
   navigate = json => {
     // E
@@ -395,7 +445,12 @@ class ProductScreens extends Component {
                     .secondryBackgroundColor,
                   paddingTop: 20,
                 }}>
-                <CategoryHeading key={0} text="Home / Product 0" />
+                <CategoryHeading
+                  key={0}
+                  text={`Home / ${
+                    this.props.navigation.state.params.productSlagName
+                  }`}
+                />
                 {/* <ScrollView key={1} horizontal={true} style={{marginTop: 20}}>
                   {Array(10)
                     .fill(0)
@@ -506,7 +561,7 @@ class ProductScreens extends Component {
                       justifyContent: 'flex-start',
                       alignItems: 'center',
                     }}>
-                    <Text
+                    {/* <Text
                       style={{
                         textAlign: 'center',
                         color: 'black',
@@ -514,7 +569,25 @@ class ProductScreens extends Component {
                         fontWeight: 'bold',
                       }}>
                       Filter
-                    </Text>
+                    </Text> */}
+                    <SelectDropdown
+                      data={this.state.filter}
+                      defaultButtonText={'Filter'}
+                      onSelect={(selectedItem, index) => {
+                        console.log(selectedItem, index);
+                      }}
+                      buttonTextAfterSelection={(selectedItem, index) => {
+                        return selectedItem;
+                      }}
+                      rowTextForSelection={(item, index) => {
+                        return item;
+                      }}
+                      buttonStyle={styles.categoryDropdownBtnStyle}
+                      buttonTextStyle={styles.filterDropdownBtnTxtStyle}
+                      dropdownStyle={styles.categoryDropdownStyle}
+                      rowStyle={styles.categoryDropdownRowStyle}
+                      rowTextStyle={styles.categoryDropdownRowTxtStyle}
+                    />
                   </View>
                   <View
                     key={1}
@@ -524,7 +597,7 @@ class ProductScreens extends Component {
                       justifyContent: 'center',
                       alignItems: 'center',
                     }}>
-                    <Text
+                    {/* <Text
                       style={{
                         textAlign: 'center',
                         color: 'black',
@@ -532,7 +605,26 @@ class ProductScreens extends Component {
                         fontWeight: 'bold',
                       }}>
                       Sort
-                    </Text>
+                    </Text> */}
+                    <SelectDropdown
+                      data={this.state.sort}
+                      defaultButtonText={'Sort'}
+                      onSelect={(selectedItem, index) => {
+                        console.log(selectedItem.name, index);
+                        this._sortProducts(selectedItem.id);
+                      }}
+                      buttonTextAfterSelection={(selectedItem, index) => {
+                        return selectedItem.name;
+                      }}
+                      rowTextForSelection={(item, index) => {
+                        return item.name;
+                      }}
+                      buttonStyle={styles.categoryDropdownBtnStyle}
+                      buttonTextStyle={styles.categoryDropdownBtnTxtStyle}
+                      dropdownStyle={styles.categoryDropdownStyle}
+                      rowStyle={styles.categoryDropdownRowStyle}
+                      rowTextStyle={styles.categoryDropdownRowTxtStyle}
+                    />
                   </View>
                   <View
                     key={2}
@@ -547,15 +639,27 @@ class ProductScreens extends Component {
                       onPress={() => {
                         this.props.setGridFlag(!this.props.gridFlag);
                       }}>
-                      <Image
-                        resizeMode="contain"
-                        key={2}
-                        style={{
-                          width: 25,
-                          height: 25,
-                        }}
-                        source={require('../../images/newImages/grid.png')}
-                      />
+                      {this.props.gridFlag ? (
+                        <Image
+                          resizeMode="contain"
+                          key={2}
+                          style={{
+                            width: 25,
+                            height: 25,
+                          }}
+                          source={require('../../images/dark/menu_bak.png')}
+                        />
+                      ) : (
+                        <Image
+                          resizeMode="contain"
+                          key={2}
+                          style={{
+                            width: 25,
+                            height: 25,
+                          }}
+                          source={require('../../images/newImages/grid.png')}
+                        />
+                      )}
                     </TouchableOpacity>
                   </View>
                 </View>
@@ -567,54 +671,140 @@ class ProductScreens extends Component {
                     padding: 10,
                   }}>
                   <Text key={0} style={{color: 'black'}}>
-                    {this.state.currentCategoryTitle}
+                    {this.props.navigation.state.params.productSlagName}
                   </Text>
                 </View>
-                <ScrollView key={8} style={{paddingHorizontal: 10}}>
-                  {this.state.subProductData?.map((item, index) => {
-                    return (
-                      <TouchableOpacity
-                        key={index + 300}
-                        style={{paddingBottom: 5, paddingLeft: 5}}
-                        onLongPress={() =>
-                          this._handleProductDetails(item.product_id)
-                        }>
-                        <ProductItem
-                          navigation={this.props.navigation}
-                          header={{
-                            rate: 50,
-                            option1: 'Best Seller',
-                            option2: 'New Arrival',
-                          }}
-                          imgLink={{
-                            uri:
-                              getThumbnailImage() +
-                              item.product_gallary.gallary_name,
-                          }}
-                          title={item.detail[0].title}
-                          priceOld={item.product_price}
-                          priceCurrent={item.product_discount_price}
-                          favorite={false}
-                          grid={false}
-                          smallImageList={[
-                            {
+                {!this.props.gridFlag ? (
+                  <ScrollView key={8} style={{paddingHorizontal: 10}}>
+                    {this.state.subProductData?.map((item, index) => {
+                      return (
+                        <TouchableOpacity
+                          key={index + 300}
+                          style={{paddingBottom: 5, paddingLeft: 5}}
+                          onLongPress={() =>
+                            this._handleProductDetails(item.product_id)
+                          }>
+                          <ProductItem
+                            navigation={this.props.navigation}
+                            header={{
+                              rate: 50,
+                              option1: 'Best Seller',
+                              option2: 'New Arrival',
+                            }}
+                            headerShown={true}
+                            imgLink={{
                               uri:
                                 getThumbnailImage() +
-                                item.product_gallary_detail[0].gallary_name,
-                            },
-                            {
-                              uri:
-                                getThumbnailImage() +
-                                item.product_gallary_detail[0].gallary_name,
-                            },
-                          ]}
-                          time={{days: 17, hrs: 17, mins: 17, seconds: 17}}
-                          onAddCart={() => this.handleAddCart()}
-                        />
-                      </TouchableOpacity>
-                    );
-                  })}
-                </ScrollView>
+                                item.product_gallary.gallary_name,
+                            }}
+                            title={item.detail[0].title}
+                            priceOld={item.product_price}
+                            priceCurrent={item.product_discount_price}
+                            favorite={false}
+                            grid={false}
+                            smallImageList={[
+                              {
+                                uri:
+                                  getThumbnailImage() +
+                                  item.product_gallary_detail[0].gallary_name,
+                              },
+                              {
+                                uri:
+                                  getThumbnailImage() +
+                                  item.product_gallary_detail[0].gallary_name,
+                              },
+                            ]}
+                            time={{days: 17, hrs: 17, mins: 17, seconds: 17}}
+                            onAddCart={() => this.handleAddCart()}
+                          />
+                        </TouchableOpacity>
+                      );
+                    })}
+                  </ScrollView>
+                ) : (
+                  <View>
+                    <ScrollView key={8}>
+                      {this.state.subProductData?.map((item, index) => {
+                        console.log('subCategory===>>>', item);
+                        return (
+                          <TouchableOpacity
+                            key={index + 300}
+                            style={{paddingLeft: 5, flexDirection: 'row'}}
+                            onLongPress={() =>
+                              this.setState({isModalVisible: true})
+                            }>
+                            <ProductItem
+                              navigation={this.props.navigation}
+                              header={{
+                                rate: 50,
+                                option1: 'Best Seller',
+                                option2: 'New Arrival',
+                              }}
+                              headerShown={true}
+                              imgLink={{
+                                uri:
+                                  getThumbnailImage() +
+                                  item.product_gallary.gallary_name,
+                              }}
+                              title={item.detail[0].title}
+                              priceOld={item.product_price}
+                              priceCurrent={item.product_discount_price}
+                              favorite={false}
+                              grid={this.props.gridFlag}
+                              smallImageList={[
+                                {
+                                  uri:
+                                    getThumbnailImage() +
+                                    item.product_gallary_detail[0].gallary_name,
+                                },
+                                {
+                                  uri:
+                                    getThumbnailImage() +
+                                    item.product_gallary_detail[0].gallary_name,
+                                },
+                              ]}
+                              time={{days: 17, hrs: 17, mins: 17, seconds: 17}}
+                              onAddCart={() => this.handleAddCart()}
+                            />
+                            <ProductItem
+                              navigation={this.props.navigation}
+                              header={{
+                                rate: 50,
+                                option1: 'Best Seller',
+                                option2: 'New Arrival',
+                              }}
+                              headerShown={false}
+                              imgLink={{
+                                uri:
+                                  getThumbnailImage() +
+                                  item.product_gallary.gallary_name,
+                              }}
+                              title={item.detail[0].title}
+                              priceOld={item.product_price}
+                              priceCurrent={item.product_discount_price}
+                              favorite={false}
+                              grid={this.props.gridFlag}
+                              smallImageList={[
+                                {
+                                  uri:
+                                    getThumbnailImage() +
+                                    item.product_gallary_detail[0].gallary_name,
+                                },
+                                {
+                                  uri:
+                                    getThumbnailImage() +
+                                    item.product_gallary_detail[0].gallary_name,
+                                },
+                              ]}
+                              time={{days: 17, hrs: 17, mins: 17, seconds: 17}}
+                              onAddCart={() => this.handleAddCart()}
+                            />
+                          </TouchableOpacity>
+                        );
+                      })}
+                    </ScrollView>
+                  </View>
+                )}
               </View>
             </View>
           }
@@ -634,9 +824,7 @@ class ProductScreens extends Component {
           animationType={'fade'}>
           <View style={styles.modalContainer}>
             <TouchableWithoutFeedback
-              onPress={() =>
-                this.setState({isModalVisible: false})
-              }>
+              onPress={() => this.setState({isModalVisible: false})}>
               <View style={styles.modalOverlay} />
             </TouchableWithoutFeedback>
             {console.log('MODAL==>>', this.state.productDetailsData)}
@@ -660,7 +848,9 @@ class ProductScreens extends Component {
               />
             </View>
             <View style={styles.modalDetailContainer}>
-              <ProductDetailScreen productData={this.state.productDetailsData} />
+              <ProductDetailScreen
+                productData={this.state.productDetailsData}
+              />
             </View>
           </View>
         </Modal>
@@ -949,5 +1139,41 @@ const styles = StyleSheet.create({
     height: Width2 * 0.2,
     width: Width2 * 0.2,
     overflow: 'hidden',
+  },
+  categoryDropdownStyle: {
+    // width: '25%',
+    backgroundColor: 'white',
+    flexDirection: 'row',
+  },
+  categoryDropdownRowStyle: {
+    width: '100%',
+    height: 35,
+    backgroundColor: 'white',
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    alignContent: 'flex-start',
+    alignSelf: 'flex-start',
+  },
+  categoryDropdownRowTxtStyle: {},
+  categoryDropdownBtnStyle: {
+    width: 120,
+    height: 26,
+    color: 'black',
+    backgroundColor: 'white',
+    flexDirection: 'row',
+    justifyContent: 'flex-start',
+    left: 5,
+  },
+  categoryDropdownBtnTxtStyle: {
+    color: 'black',
+    fontSize: 15,
+    textAlign: 'center',
+    fontWeight: 'bold',
+  },
+  filterDropdownBtnTxtStyle: {
+    color: 'black',
+    fontSize: 15,
+    textAlign: 'left',
+    fontWeight: 'bold',
   },
 });

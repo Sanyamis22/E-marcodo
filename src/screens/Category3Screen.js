@@ -18,6 +18,7 @@ import Header from '../common/HeaderCustom';
 import {appTextStyle} from '../common/Theme.style';
 import downIcon from '../images/down_dark.png';
 import nextIcon from '../images/next_dark.png';
+import {getThumbnailImage} from '../common/WooComFetch';
 
 class Category3 extends PureComponent {
   constructor(props) {
@@ -25,6 +26,8 @@ class Category3 extends PureComponent {
     this.state = {
       activityIndicatorTemp: false,
       activeId: 0,
+      isVisible: false,
+      subCategoryData: [],
       categories: [
         {
           id: 1,
@@ -54,6 +57,20 @@ class Category3 extends PureComponent {
     };
   }
 
+  noProductFun = () => (
+    <View style={styles.noProductView}>
+      <Icon name={'logo-dropbox'} style={{color: 'gray', fontSize: 80}} />
+      <Text
+        style={{
+          fontFamily: appTextStyle.fontFamily,
+          fontSize: appTextStyle.largeSize + 2,
+          color: this.props.themeStyle.textColor,
+        }}>
+        {this.props.language['No Products Found']}
+      </Text>
+    </View>
+  );
+
   componentDidMount() {
     this.props.navigation.setParams({
       headerTitle: this.props.language.Category,
@@ -63,16 +80,46 @@ class Category3 extends PureComponent {
     this.setState({activityIndicatorTemp: false});
   }
 
-  setActiveItem(value) {
-    let id = value;
-    if (value === this.state.activeId) {
-      id = 0;
+  setActiveItem(item) {
+    console.log('Item is active', item);
+    // let id = value;
+    // if (value === this.state.activeId) {
+    //   id = 0;
+    // }
+    // this.setState(state => ({
+    //   ...state,
+    //   activeId: id,
+    // }));
+    // const newData = this.props.sortCategory.filter(data => {
+    //   if (item == data.parent) {
+    //     return data;
+    //   } else {
+    //     this.noProductFun();
+    //   }
+    // });
+    const newData = this.props.sortCategory
+      .filter(data => {
+        if (data.parent == item) {
+          return data;
+        } else {
+          this.noProductFun();
+        }
+      })
+      .reduce((acc, curr) => {
+        if (acc?.findIndex(item => item.name == curr.name) == -1) {
+          acc.push(curr);
+        }
+        return acc;
+      }, []);
+    if (!this.state.isVisible) {
+      this.setState({isVisible: true});
+      this.setState({
+        subCategoryData: newData,
+        activeId: item,
+      });
+    } else {
+      this.setState({isVisible: false});
     }
-
-    this.setState(state => ({
-      ...state,
-      activeId: id,
-    }));
   }
 
   render() {
@@ -144,49 +191,80 @@ class Category3 extends PureComponent {
             <Text style={styles.loginTxt}>Log in</Text>
           </TouchableOpacity>
           <ScrollView style={styles.cateContainer}>
-            {this.state.categories.map((item, index) => (
-              <View key={index}>
-                <TouchableOpacity
-                  style={[styles.flexRow, styles.cateItem, styles.borderShadow]}
-                  onPress={() => this.setActiveItem(item.id)}>
-                  <View style={styles.flexRow}>
-                    <Image source={item.imgLink} style={styles.cateImg} />
-                    <Text style={styles.styleTxt}>{item.title}</Text>
-                  </View>
-                  <Image
-                    source={
-                      this.state.activeId === item.id ? nextIcon : downIcon
-                    }
-                    style={{tintColor: '#fdb515'}}
-                  />
-                </TouchableOpacity>
-                {this.state.activeId === item.id && (
-                  <View style={styles.subContainer}>
-                    {this.state.categories.map((subItem, subIndex) => (
-                      <TouchableOpacity
-                        key={subIndex}
-                        style={[
-                          styles.flexRow,
-                          styles.subItem,
-                          styles.borderShadow,
-                        ]}>
-                        <View style={styles.flexRow}>
+            {this.props.sortCategory
+              .reduce((acc, curr) => {
+                if (
+                  acc?.findIndex(
+                    item => item.parent_name == curr.parent_name,
+                  ) == -1
+                ) {
+                  acc.push(curr);
+                }
+                return acc;
+              }, [])
+              .map((item, index) => (
+                <View key={index}>
+                  <TouchableOpacity
+                    style={[
+                      styles.flexRow,
+                      styles.cateItem,
+                      styles.borderShadow,
+                    ]}
+                    onPress={() => this.setActiveItem(item.parent)}>
+                    <View style={styles.flexRow}>
+                      <Image
+                        source={{
+                          uri: getThumbnailImage() + item.gallary,
+                        }}
+                        style={styles.cateImg}
+                      />
+                      <Text style={styles.styleTxt}>{item.parent_name}</Text>
+                    </View>
+                    <Image
+                      source={
+                        this.state.activeId === item.parent &&
+                        this.state.isVisible
+                          ? nextIcon
+                          : downIcon
+                      }
+                      style={{tintColor: '#fdb515'}}
+                    />
+                  </TouchableOpacity>
+                  {this.state.activeId === item.parent && this.state.isVisible && (
+                    <View style={styles.subContainer}>
+                      {this.state.subCategoryData?.map((subItem, subIndex) => (
+                        <TouchableOpacity
+                          key={subIndex}
+                          style={[
+                            styles.flexRow,
+                            styles.subItem,
+                            styles.borderShadow,
+                          ]}
+                          onPress={() => {
+                            this.props.navigation.navigate('CategoryScreens', {
+                              slagName: item.parent_name,
+                              slagId: item.parent,
+                            });
+                          }}>
+                          <View style={styles.flexRow}>
+                            <Image
+                              source={{
+                                uri: getThumbnailImage() + subItem.gallary,
+                              }}
+                              style={styles.subImg}
+                            />
+                            <Text style={styles.styleTxt}>{subItem.name}</Text>
+                          </View>
                           <Image
-                            source={subItem.imgLink}
-                            style={styles.subImg}
+                            source={downIcon}
+                            style={{tintColor: '#fdb515'}}
                           />
-                          <Text style={styles.styleTxt}>{subItem.title}</Text>
-                        </View>
-                        <Image
-                          source={downIcon}
-                          style={{tintColor: '#fdb515'}}
-                        />
-                      </TouchableOpacity>
-                    ))}
-                  </View>
-                )}
-              </View>
-            ))}
+                        </TouchableOpacity>
+                      ))}
+                    </View>
+                  )}
+                </View>
+              ))}
           </ScrollView>
         </ScrollView>
       </View>

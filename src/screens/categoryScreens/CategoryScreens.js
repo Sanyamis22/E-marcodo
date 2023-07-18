@@ -41,6 +41,7 @@ import CategoryHeading from '../../common/CategoryHeading';
 import ProductItem from '../../common/ProductItem';
 import {getThumbnailImage} from '../../common/WooComFetch';
 import CategoryProductDetailScreen from '../CategoryProductDetailScreen';
+import SelectDropdown from 'react-native-select-dropdown';
 const WIDTH = Dimensions.get('window').width;
 const Width2 = WIDTH;
 class CategoryScreens extends Component {
@@ -67,6 +68,8 @@ class CategoryScreens extends Component {
       subCategoryData: [],
       categoryProductDetail: [],
       currentCategoryTitle: '',
+      sort: ['price', 'Low-to-High', 'High-to-Low', 'Name', 'A-Z', 'Z-A'],
+      filter: ['Color', 'Price', 'Ram', 'Size'],
     };
     this.toast = null;
   }
@@ -201,13 +204,31 @@ class CategoryScreens extends Component {
   }
 
   _handleSubCategory(item) {
-    const newData = this.props.sortCategory.filter(data => {
-      if (item == data.parent) {
-        return data;
-      } else {
-        this.noProductFun();
-      }
-    });
+    // const newData = this.props.sortCategory.filter(data => {
+    //   if (item == data.id) {
+    //     return data;
+    //   } else {
+    //     this.noProductFun();
+    //   }
+    // });
+    // this.setState({
+    //   subCategoryData: newData,
+    //   currentCategoryTitle: newData.parent_name,
+    // });
+    const newData = this.props.sortCategory
+      .filter(data => {
+        if (data.id == item) {
+          return data;
+        } else {
+          this.noProductFun();
+        }
+      })
+      .reduce((acc, curr) => {
+        if (acc?.findIndex(item => item.name == curr.name) == -1) {
+          acc.push(curr);
+        }
+        return acc;
+      }, []);
     this.setState({
       subCategoryData: newData,
       currentCategoryTitle: newData.parent_name,
@@ -319,6 +340,7 @@ class CategoryScreens extends Component {
       this.state.refreshing = false;
     }
 
+    console.log('params==>', this.props.navigation.state.params);
     return this.state.activityIndicatorTemp ? (
       <View
         style={[
@@ -394,7 +416,10 @@ class CategoryScreens extends Component {
                     .secondryBackgroundColor,
                   paddingTop: 20,
                 }}>
-                <CategoryHeading key={0} text="Home / Category 0" />
+                <CategoryHeading
+                  key={0}
+                  text={`Home / ${this.props.navigation.state.params.slagName}`}
+                />
                 {/* <ScrollView key={1} horizontal={true} style={{marginTop: 20}}>
                   {Array(10)
                     .fill(0)
@@ -420,11 +445,16 @@ class CategoryScreens extends Component {
                 </ScrollView> */}
                 <ScrollView key={2} horizontal={true}>
                   {this.props.sortCategory
+                    .filter(data => {
+                      if (
+                        data.parent == this.props.navigation.state.params.slagId
+                      ) {
+                        return data;
+                      }
+                    })
                     .reduce((acc, curr) => {
                       if (
-                        acc?.findIndex(
-                          item => item.parent_name == curr.parent_name,
-                        ) == -1
+                        acc?.findIndex(item => item.name == curr.name) == -1
                       ) {
                         acc.push(curr);
                       }
@@ -437,9 +467,7 @@ class CategoryScreens extends Component {
                           key={index + 100}
                           style={{paddingBottom: 10, paddingLeft: 5}}>
                           <TouchableOpacity
-                            onPress={() =>
-                              this._handleSubCategory(item.parent)
-                            }>
+                            onPress={() => this._handleSubCategory(item.id)}>
                             <View
                               style={{
                                 width: 80,
@@ -468,7 +496,7 @@ class CategoryScreens extends Component {
                           </TouchableOpacity>
                           <Text
                             style={{alignItems: 'center', textAlign: 'center'}}>
-                            {item.parent_name}
+                            {item.name}
                           </Text>
                         </View>
                       );
@@ -499,7 +527,7 @@ class CategoryScreens extends Component {
                       justifyContent: 'flex-start',
                       alignItems: 'center',
                     }}>
-                    <Text
+                    {/* <Text
                       style={{
                         textAlign: 'center',
                         color: 'black',
@@ -507,7 +535,25 @@ class CategoryScreens extends Component {
                         fontWeight: 'bold',
                       }}>
                       Filter
-                    </Text>
+                    </Text> */}
+                    <SelectDropdown
+                      data={this.state.filter}
+                      defaultButtonText={'Filter'}
+                      onSelect={(selectedItem, index) => {
+                        console.log(selectedItem, index);
+                      }}
+                      buttonTextAfterSelection={(selectedItem, index) => {
+                        return selectedItem;
+                      }}
+                      rowTextForSelection={(item, index) => {
+                        return item;
+                      }}
+                      buttonStyle={styles.categoryDropdownBtnStyle}
+                      buttonTextStyle={styles.filterDropdownBtnTxtStyle}
+                      dropdownStyle={styles.categoryDropdownStyle}
+                      rowStyle={styles.categoryDropdownRowStyle}
+                      rowTextStyle={styles.categoryDropdownRowTxtStyle}
+                    />
                   </View>
                   <View
                     key={1}
@@ -517,7 +563,7 @@ class CategoryScreens extends Component {
                       justifyContent: 'center',
                       alignItems: 'center',
                     }}>
-                    <Text
+                    {/* <Text
                       style={{
                         textAlign: 'center',
                         color: 'black',
@@ -525,7 +571,25 @@ class CategoryScreens extends Component {
                         fontWeight: 'bold',
                       }}>
                       Sort
-                    </Text>
+                    </Text> */}
+                    <SelectDropdown
+                      data={this.state.sort}
+                      defaultButtonText={'Sort'}
+                      onSelect={(selectedItem, index) => {
+                        console.log(selectedItem, index);
+                      }}
+                      buttonTextAfterSelection={(selectedItem, index) => {
+                        return selectedItem;
+                      }}
+                      rowTextForSelection={(item, index) => {
+                        return item;
+                      }}
+                      buttonStyle={styles.categoryDropdownBtnStyle}
+                      buttonTextStyle={styles.categoryDropdownBtnTxtStyle}
+                      dropdownStyle={styles.categoryDropdownStyle}
+                      rowStyle={styles.categoryDropdownRowStyle}
+                      rowTextStyle={styles.categoryDropdownRowTxtStyle}
+                    />
                   </View>
                   <View
                     key={2}
@@ -540,15 +604,27 @@ class CategoryScreens extends Component {
                       onPress={() => {
                         this.props.setGridFlag(!this.props.gridFlag);
                       }}>
-                      <Image
-                        resizeMode="contain"
-                        key={2}
-                        style={{
-                          width: 25,
-                          height: 25,
-                        }}
-                        source={require('../../images/newImages/grid.png')}
-                      />
+                      {this.props.gridFlag ? (
+                        <Image
+                          resizeMode="contain"
+                          key={2}
+                          style={{
+                            width: 25,
+                            height: 25,
+                          }}
+                          source={require('../../images/dark/menu_bak.png')}
+                        />
+                      ) : (
+                        <Image
+                          resizeMode="contain"
+                          key={2}
+                          style={{
+                            width: 25,
+                            height: 25,
+                          }}
+                          source={require('../../images/newImages/grid.png')}
+                        />
+                      )}
                     </TouchableOpacity>
                   </View>
                 </View>
@@ -560,43 +636,122 @@ class CategoryScreens extends Component {
                     padding: 10,
                   }}>
                   <Text key={0} style={{color: 'black'}}>
-                    {this.state.currentCategoryTitle}
+                    {this.props.navigation.state.params.slagName}
                   </Text>
                 </View>
-                <ScrollView key={8} style={{paddingHorizontal: 10}}>
-                  {this.state.subCategoryData?.map((item, index) => {
-                    console.log('subCategory===>>>', item);
-                    return (
-                      <TouchableOpacity
-                        key={index + 300}
-                        style={{paddingBottom: 5, paddingLeft: 5}}
-                        onLongPress={() =>
-                          this._handleCategoryProductDetails(item.id)
-                        }>
-                        <ProductItem
-                          navigation={this.props.navigation}
-                          header={{
-                            rate: 50,
-                            option1: 'Best Seller',
-                            option2: 'New Arrival',
-                          }}
-                          imgLink={{uri: getThumbnailImage() + item.gallary}}
-                          title={item.name}
-                          priceOld={10.99}
-                          priceCurrent={5.99}
-                          favorite={false}
-                          grid={false}
-                          smallImageList={[
-                            {uri: getThumbnailImage() + item.gallary},
-                            {uri: getThumbnailImage() + item.gallary},
-                          ]}
-                          time={{days: 17, hrs: 17, mins: 17, seconds: 17}}
-                          onAddCart={() => this.handleAddCart()}
-                        />
-                      </TouchableOpacity>
-                    );
-                  })}
-                </ScrollView>
+                {!this.props.gridFlag ? (
+                  <>
+                    {this.state.subCategoryData?.map((item, index) => {
+                      console.log('subCategory===>>>', item);
+                      return (
+                        <ScrollView key={8} style={{paddingHorizontal: 10}}>
+                          <TouchableOpacity
+                            key={index + 300}
+                            style={{paddingBottom: 5, paddingLeft: 5}}
+                            onLongPress={() =>
+                              this._handleCategoryProductDetails(item.id)
+                            }>
+                            <ProductItem
+                              navigation={this.props.navigation}
+                              header={{
+                                rate: 50,
+                                option1: 'Best Seller',
+                                option2: 'New Arrival',
+                              }}
+                              imgLink={{
+                                uri: getThumbnailImage() + item.gallary,
+                              }}
+                              headerShown={true}
+                              title={item.name}
+                              priceOld={10.99}
+                              priceCurrent={5.99}
+                              favorite={false}
+                              grid={false}
+                              smallImageList={[
+                                {uri: getThumbnailImage() + item.gallary},
+                                {uri: getThumbnailImage() + item.gallary},
+                              ]}
+                              time={{days: 17, hrs: 17, mins: 17, seconds: 17}}
+                              onAddCart={() => this.handleAddCart()}
+                            />
+                          </TouchableOpacity>
+                        </ScrollView>
+                      );
+                    })}
+                  </>
+                ) : (
+                  <View>
+                    <ScrollView key={8} horizontal={!this.props.gridFlag}>
+                      {this.state.subCategoryData?.map((item, index) => {
+                        console.log('subCategory===>>>', item);
+                        return (
+                          <View style={{flexDirection: 'row'}}>
+                            <TouchableOpacity
+                              key={index + 300}
+                              style={{paddingLeft: 5, flexDirection: 'row'}}
+                              onLongPress={() =>
+                                this._handleCategoryProductDetails(item.id)
+                              }>
+                              <ProductItem
+                                navigation={this.props.navigation}
+                                header={{
+                                  rate: 50,
+                                  option1: 'Best Seller',
+                                  option2: 'New Arrival',
+                                }}
+                                headerShown={true}
+                                imgLink={{
+                                  uri: getThumbnailImage() + item.gallary,
+                                }}
+                                title={item.name}
+                                priceOld={10.99}
+                                priceCurrent={5.99}
+                                favorite={false}
+                                grid={this.props.gridFlag}
+                                smallImageList={[
+                                  {uri: getThumbnailImage() + item.gallary},
+                                  {uri: getThumbnailImage() + item.gallary},
+                                ]}
+                                // time={{days: 17, hrs: 17, mins: 17, seconds: 17}}
+                                onAddCart={() => this.handleAddCart()}
+                              />
+                            </TouchableOpacity>
+                            <TouchableOpacity
+                              key={index + 300}
+                              style={{paddingLeft: 5, flexDirection: 'row'}}
+                              onLongPress={() =>
+                                this._handleCategoryProductDetails(item.id)
+                              }>
+                              <ProductItem
+                                navigation={this.props.navigation}
+                                header={{
+                                  rate: 50,
+                                  option1: 'Best Seller',
+                                  option2: 'New Arrival',
+                                }}
+                                headerShown={false}
+                                imgLink={{
+                                  uri: getThumbnailImage() + item.gallary,
+                                }}
+                                title={item.name}
+                                priceOld={10.99}
+                                priceCurrent={5.99}
+                                favorite={false}
+                                grid={this.props.gridFlag}
+                                smallImageList={[
+                                  {uri: getThumbnailImage() + item.gallary},
+                                  {uri: getThumbnailImage() + item.gallary},
+                                ]}
+                                // time={{days: 17, hrs: 17, mins: 17, seconds: 17}}
+                                onAddCart={() => this.handleAddCart()}
+                              />
+                            </TouchableOpacity>
+                          </View>
+                        );
+                      })}
+                    </ScrollView>
+                  </View>
+                )}
               </View>
             </View>
           }
@@ -931,5 +1086,41 @@ const styles = StyleSheet.create({
     height: Width2 * 0.2,
     width: Width2 * 0.2,
     overflow: 'hidden',
+  },
+  categoryDropdownStyle: {
+    // width: '25%',
+    backgroundColor: 'white',
+    flexDirection: 'row',
+  },
+  categoryDropdownRowStyle: {
+    width: '100%',
+    height: 35,
+    backgroundColor: 'white',
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    alignContent: 'flex-start',
+    alignSelf: 'flex-start',
+  },
+  categoryDropdownRowTxtStyle: {},
+  categoryDropdownBtnStyle: {
+    width: 120,
+    height: 26,
+    color: 'black',
+    backgroundColor: 'white',
+    flexDirection: 'row',
+    justifyContent: 'flex-start',
+    left: 5,
+  },
+  categoryDropdownBtnTxtStyle: {
+    color: 'black',
+    fontSize: 15,
+    textAlign: 'center',
+    fontWeight: 'bold',
+  },
+  filterDropdownBtnTxtStyle: {
+    color: 'black',
+    fontSize: 15,
+    textAlign: 'left',
+    fontWeight: 'bold',
   },
 });

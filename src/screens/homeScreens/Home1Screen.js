@@ -460,7 +460,13 @@ class Newest extends Component {
                           style={{paddingBottom: 10, paddingLeft: 5}}>
                           <TouchableOpacity
                             onPress={() => {
-                              this.props.navigation.navigate('CategoryScreens');
+                              this.props.navigation.navigate(
+                                'CategoryScreens',
+                                {
+                                  slagName: item.parent_name,
+                                  slagId: item.parent,
+                                },
+                              );
                             }}>
                             <View
                               style={{
@@ -533,7 +539,10 @@ class Newest extends Component {
                           style={{paddingBottom: 10, paddingLeft: 5}}>
                           <TouchableOpacity
                             onPress={() => {
-                              this.props.navigation.navigate('ProductScreens');
+                              this.props.navigation.navigate('ProductScreens', {
+                                productSlagName: item.product_brand.brand_name,
+                                productSlagId: item.product_brand.brand_id,
+                              });
                             }}>
                             <View
                               style={{
@@ -635,7 +644,7 @@ class Newest extends Component {
                   </TouchableOpacity>
                   <TouchableOpacity
                     onPress={() => {
-                      this.setState({selectedTab: '3'});
+                      this.setState({selectedTab: '2'});
                     }}
                     key={1}
                     style={{
@@ -655,7 +664,7 @@ class Newest extends Component {
                   </TouchableOpacity>
                   <TouchableOpacity
                     onPress={() => {
-                      this.setState({selectedTab: '1'});
+                      this.setState({selectedTab: '3'});
                     }}
                     key={2}
                     style={{
@@ -680,6 +689,9 @@ class Newest extends Component {
                       height: 40,
                       backgroundColor: 'dodgerblue',
                       justifyContent: 'center',
+                    }}
+                    onPress={() => {
+                      this.setState({selectedTab: '4'});
                     }}>
                     <Text
                       style={{
@@ -699,9 +711,23 @@ class Newest extends Component {
                     justifyContent: 'space-between',
                     padding: 10,
                   }}>
-                  <Text key={0} style={{color: 'black'}}>
-                    Offer
-                  </Text>
+                  {this.state.selectedTab === '1' ? (
+                    <Text key={0} style={{color: 'black'}}>
+                      Offer
+                    </Text>
+                  ) : this.state.selectedTab === '2' ? (
+                    <Text key={0} style={{color: 'black'}}>
+                      New Arrival
+                    </Text>
+                  ) : this.state.selectedTab === '3' ? (
+                    <Text key={0} style={{color: 'black'}}>
+                      Best Seller
+                    </Text>
+                  ) : this.state.selectedTab === '4' ? (
+                    <Text key={0} style={{color: 'black'}}>
+                      Most liked
+                    </Text>
+                  ) : null}
                   <Text key={1} style={{color: 'black'}}>
                     See All
                   </Text>
@@ -771,7 +797,7 @@ class Newest extends Component {
                 </ScrollView> */}
                 <ScrollView>
                   <View style={styles.screenContainer}>
-                    {this.state.selectedTab === '1' ? (
+                    {this.state.selectedTab === '3' ? (
                       <View style={styles.screenInnerContainer}>
                         {this.props.topsellerProducts !== undefined ? (
                           <FlatListView
@@ -792,7 +818,7 @@ class Newest extends Component {
                           this.noProductFun()
                         )}
                       </View>
-                    ) : this.state.selectedTab === '3' ? (
+                    ) : this.state.selectedTab === '2' ? (
                       <View style={styles.tabInnerContainer}>
                         {this.props.featuredProducts !== undefined ? (
                           <FlatListView
@@ -813,7 +839,7 @@ class Newest extends Component {
                           this.noProductFun()
                         )}
                       </View>
-                    ) : (
+                    ) : this.state.selectedTab === '1' ? (
                       <View
                         style={{
                           justifyContent: 'center',
@@ -838,7 +864,28 @@ class Newest extends Component {
                           this.noProductFun()
                         )}
                       </View>
-                    )}
+                    ) : this.state.selectedTab === '4' ? (
+                      <>
+                        {this.props.hotProducts !== undefined ? (
+                          <FlatListView
+                            vertical={true}
+                            noOfCol={1}
+                            dataName={'topSelling'}
+                            viewButton={false}
+                            navigation={this.props.navigation}
+                            cardStyle={this.props.settings.card_style}
+                            tabArray={
+                              this.props.hotProducts !== undefined &&
+                              this.props.hotProducts !== null
+                                ? this.props.hotProducts
+                                : []
+                            }
+                          />
+                        ) : (
+                          this.noProductFun()
+                        )}
+                      </>
+                    ) : null}
                   </View>
                   {this.props.hotProducts !== undefined ? (
                     <FlatListView
