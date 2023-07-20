@@ -66,6 +66,9 @@ class Newest extends Component {
       page: 1,
       productColorCounter: 0,
       parentArray: [],
+      topSellerData: [],
+      onSaleData: [],
+      onHotData: [],
     };
     this.toast = null;
   }
@@ -242,6 +245,56 @@ class Newest extends Component {
     ) {
       this.setState({fabB: false});
     }
+  }
+
+  _handleTopSellerProduct() {
+    const newData = this.props.topsellerProducts.filter(data => {
+      if (data !== undefined) {
+        return data;
+      } else {
+        this.noProductFun();
+      }
+    });
+    // .reduce((acc, curr) => {
+    //   if (acc?.findIndex(item => item.name == curr.name) == -1) {
+    //     acc.push(curr);
+    //   }
+    //   return acc;
+    // }, []);
+    this.setState({
+      topSellerData: newData,
+      selectedTab: '3',
+    });
+  }
+
+  _handleOfferProduct() {
+    const newSaleData = this.props.onSaleProducts.filter(data => {
+      if (data !== undefined) {
+        return data;
+      } else {
+        this.noProductFun();
+      }
+      console.log('onsaleData==>>', data);
+    });
+    this.setState({
+      onSaleData: newSaleData,
+      selectedTab: '1',
+    });
+  }
+
+  _handleHotProduct() {
+    const newHotData = this.props.hotProducts.filter(data => {
+      if (data !== undefined) {
+        return data;
+      } else {
+        this.noProductFun();
+      }
+      console.log('newHotData==>>', data);
+    });
+    this.setState({
+      onHotData: newHotData,
+      selectedTab: '4',
+    });
   }
 
   // categoryHeading (text) {
@@ -624,9 +677,10 @@ class Newest extends Component {
                     </Text>
                   </View> */}
                   <TouchableOpacity
-                    onPress={() => {
-                      this.setState({selectedTab: '1'});
-                    }}
+                    // onPress={() => {
+                    //   this.setState({selectedTab: '1'});
+                    // }}
+                    onPress={() => this._handleOfferProduct()}
                     style={{
                       width: 80,
                       height: 40,
@@ -663,9 +717,10 @@ class Newest extends Component {
                     </Text>
                   </TouchableOpacity>
                   <TouchableOpacity
-                    onPress={() => {
-                      this.setState({selectedTab: '3'});
-                    }}
+                    onPress={() => this._handleTopSellerProduct()}
+                    // onPress={() => {
+                    //   this.setState({selectedTab: '3'});
+                    // }}
                     key={2}
                     style={{
                       width: 80,
@@ -690,9 +745,11 @@ class Newest extends Component {
                       backgroundColor: 'dodgerblue',
                       justifyContent: 'center',
                     }}
-                    onPress={() => {
-                      this.setState({selectedTab: '4'});
-                    }}>
+                    onPress={() => this._handleHotProduct()}
+                    // onPress={() => {
+                    //   this.setState({selectedTab: '4'});
+                    // }}
+                  >
                     <Text
                       style={{
                         textAlign: 'center',
@@ -795,28 +852,88 @@ class Newest extends Component {
                     </TouchableOpacity>
                   })}
                 </ScrollView> */}
-                <ScrollView>
+                <ScrollView horizontal={true} style={{paddingBottom: 30}}>
                   <View style={styles.screenContainer}>
                     {this.state.selectedTab === '3' ? (
+                      // <View style={styles.screenInnerContainer}>
+                      //   {console.log(
+                      //     'topseller===>>',
+                      //     this.props.topsellerProducts,
+                      //   )}
+                      //   {this.props.topsellerProducts !== undefined ? (
+                      //     <FlatListView
+                      //       vertical={true}
+                      //       noOfCol={1}
+                      //       dataName={'topSelling'}
+                      //       viewButton={false}
+                      //       navigation={this.props.navigation}
+                      //       cardStyle={this.props.settings.home_style}
+                      //       tabArray={
+                      //         this.props.topsellerProducts !== undefined &&
+                      //         this.props.topsellerProducts !== null
+                      //           ? this.props.topsellerProducts
+                      //           : []
+                      //       }
+                      //     />
+                      //   ) : (
+                      //     this.noProductFun()
+                      //   )}
+                      // </View>
                       <View style={styles.screenInnerContainer}>
-                        {this.props.topsellerProducts !== undefined ? (
-                          <FlatListView
-                            vertical={true}
-                            noOfCol={1}
-                            dataName={'topSelling'}
-                            viewButton={false}
-                            navigation={this.props.navigation}
-                            cardStyle={this.props.settings.home_style}
-                            tabArray={
-                              this.props.topsellerProducts !== undefined &&
-                              this.props.topsellerProducts !== null
-                                ? this.props.topsellerProducts
-                                : []
-                            }
-                          />
-                        ) : (
-                          this.noProductFun()
-                        )}
+                        {this.state.topSellerData.map((item, index) => {
+                          return (
+                            <ProductItem
+                              onProductClick={() =>
+                                this.props.navigation.navigate('NewestScreen', {
+                                  id: this.props.parentId,
+                                  name: '',
+                                  brand:
+                                    this.props.dataName === 'topSelling'
+                                      ? 'topSelling'
+                                      : this.props.dataName === 'isFeatured'
+                                      ? 'isFeatured'
+                                      : 'discount_price',
+                                })
+                              }
+                              navigation={this.props.navigation}
+                              header={{
+                                rate: 50,
+                                option1: 'Best Seller',
+                                option2: 'New Arrival',
+                              }}
+                              headerShown={true}
+                              imgLink={{
+                                uri:
+                                  getThumbnailImage() +
+                                  item.product_gallary.gallary_name,
+                              }}
+                              title={item.detail[0].title}
+                              priceOld={item.product_price}
+                              priceCurrent={item.product_discount_price}
+                              favorite={false}
+                              grid={this.props.gridFlag}
+                              smallImageList={[
+                                {
+                                  uri:
+                                    getThumbnailImage() +
+                                    item.product_gallary_detail[0].gallary_name,
+                                },
+                                {
+                                  uri:
+                                    getThumbnailImage() +
+                                    item.product_gallary_detail[0].gallary_name,
+                                },
+                              ]}
+                              time={{
+                                days: 17,
+                                hrs: 17,
+                                mins: 17,
+                                seconds: 17,
+                              }}
+                              onAddCart={() => this.handleAddCart()}
+                            />
+                          );
+                        })}
                       </View>
                     ) : this.state.selectedTab === '2' ? (
                       <View style={styles.tabInnerContainer}>
@@ -842,10 +959,65 @@ class Newest extends Component {
                     ) : this.state.selectedTab === '1' ? (
                       <View
                         style={{
+                          flexDirection: 'row',
                           justifyContent: 'center',
                           alignItems: 'center',
                         }}>
-                        {this.props.onSaleProducts !== undefined ? (
+                        {this.state.onSaleData.map((item, index) => {
+                          return (
+                            <ProductItem
+                              onProductClick={() =>
+                                this.props.navigation.navigate('NewestScreen', {
+                                  id: this.props.parentId,
+                                  name: '',
+                                  brand:
+                                    this.props.dataName === 'topSelling'
+                                      ? 'topSelling'
+                                      : this.props.dataName === 'isFeatured'
+                                      ? 'isFeatured'
+                                      : 'discount_price',
+                                })
+                              }
+                              navigation={this.props.navigation}
+                              header={{
+                                rate: 50,
+                                option1: 'Best Seller',
+                                option2: 'New Arrival',
+                              }}
+                              headerShown={true}
+                              imgLink={{
+                                uri:
+                                  getThumbnailImage() +
+                                  item.product_gallary.gallary_name,
+                              }}
+                              title={item.detail[0].title}
+                              priceOld={item.product_price}
+                              priceCurrent={item.product_discount_price}
+                              favorite={false}
+                              grid={this.props.gridFlag}
+                              smallImageList={[
+                                {
+                                  uri:
+                                    getThumbnailImage() +
+                                    item.product_gallary_detail[0].gallary_name,
+                                },
+                                {
+                                  uri:
+                                    getThumbnailImage() +
+                                    item.product_gallary_detail[0].gallary_name,
+                                },
+                              ]}
+                              time={{
+                                days: 17,
+                                hrs: 17,
+                                mins: 17,
+                                seconds: 17,
+                              }}
+                              onAddCart={() => this.handleAddCart()}
+                            />
+                          );
+                        })}
+                        {/* {this.props.onSaleProducts !== undefined ? (
                           <FlatListView
                             vertical={true}
                             noOfCol={1}
@@ -862,11 +1034,16 @@ class Newest extends Component {
                           />
                         ) : (
                           this.noProductFun()
-                        )}
+                        )} */}
                       </View>
                     ) : this.state.selectedTab === '4' ? (
-                      <>
-                        {this.props.hotProducts !== undefined ? (
+                      <View
+                        style={{
+                          flexDirection: 'row',
+                          justifyContent: 'center',
+                          alignItems: 'center',
+                        }}>
+                        {/* {this.props.hotProducts !== undefined ? (
                           <FlatListView
                             vertical={true}
                             noOfCol={1}
@@ -883,11 +1060,55 @@ class Newest extends Component {
                           />
                         ) : (
                           this.noProductFun()
-                        )}
-                      </>
+                        )} */}
+                        {this.state.onHotData.map((item, index) => {
+                          return (
+                            <ProductItem
+                              navigation={this.props.navigation}
+                              header={{
+                                rate: 50,
+                                option1: 'Best Seller',
+                                option2: 'New Arrival',
+                              }}
+                              headerShown={true}
+                              imgLink={{
+                                uri:
+                                  getThumbnailImage() +
+                                  item.product_gallary.gallary_name,
+                              }}
+                              title={item.detail[0].title}
+                              priceOld={item.product_price}
+                              priceCurrent={item.product_discount_price}
+                              favorite={false}
+                              grid={this.props.gridFlag}
+                              smallImageList={[
+                                {
+                                  uri:
+                                    getThumbnailImage() +
+                                    item.product_gallary_detail[0].gallary_name,
+                                },
+                                {
+                                  uri:
+                                    getThumbnailImage() +
+                                    item.product_gallary_detail[0].gallary_name,
+                                },
+                              ]}
+                              time={{
+                                days: 17,
+                                hrs: 17,
+                                mins: 17,
+                                seconds: 17,
+                              }}
+                              onAddCart={() => this.handleAddCart()}
+                            />
+                          );
+                        })}
+                      </View>
                     ) : null}
+                    {console.log('hotty=>', this.props.hotProducts)}
                   </View>
-                  {this.props.hotProducts !== undefined ? (
+
+                  {/* {this.state.onHotData !== undefined ? (
                     <FlatListView
                       vertical={true}
                       noOfCol={1}
@@ -904,7 +1125,49 @@ class Newest extends Component {
                     />
                   ) : (
                     this.noProductFun()
-                  )}
+                  )} */}
+                  {this.state.onHotData.map((item, index) => {
+                    return (
+                      <ProductItem
+                        navigation={this.props.navigation}
+                        header={{
+                          rate: 50,
+                          option1: 'Best Seller',
+                          option2: 'New Arrival',
+                        }}
+                        headerShown={true}
+                        imgLink={{
+                          uri:
+                            getThumbnailImage() +
+                            item.product_gallary.gallary_name,
+                        }}
+                        title={item.detail[0].title}
+                        priceOld={item.product_price}
+                        priceCurrent={item.product_discount_price}
+                        favorite={false}
+                        grid={this.props.gridFlag}
+                        smallImageList={[
+                          {
+                            uri:
+                              getThumbnailImage() +
+                              item.product_gallary_detail[0].gallary_name,
+                          },
+                          {
+                            uri:
+                              getThumbnailImage() +
+                              item.product_gallary_detail[0].gallary_name,
+                          },
+                        ]}
+                        time={{
+                          days: 17,
+                          hrs: 17,
+                          mins: 17,
+                          seconds: 17,
+                        }}
+                        onAddCart={() => this.handleAddCart()}
+                      />
+                    );
+                  })}
                 </ScrollView>
               </View>
             </View>
@@ -1258,7 +1521,7 @@ const styles = StyleSheet.create({
   },
   screenInnerContainer: {
     flex: 1,
-    flexDirection: 'column',
+    flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
   },

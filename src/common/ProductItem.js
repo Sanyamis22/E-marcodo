@@ -19,10 +19,14 @@ class ProductItem extends Component {
       smallImageList,
       time,
       headerShown,
+      homeView,
+      onProductClick,
     } = this.props,
   ) {
     return (
-      <View style={grid ? styles.container : styles.container1}>
+      <TouchableOpacity
+        style={grid ? styles.container : styles.container1}
+        onPress={onProductClick}>
         <View style={grid ? {} : {width: '50%'}}>
           {headerShown == true ? (
             <View
@@ -191,21 +195,27 @@ class ProductItem extends Component {
               </TouchableOpacity>
             </View>
           ) : (
-            <View style={{flexDirection: 'row'}}>
-              <TouchableOpacity
-                style={styles.add2CartBtn}
-                onPress={() => console.log('Add to cart')}>
-                <Text style={styles.cartBtnText}>Add To Cart</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={styles.cartBtn}
-                onPress={() => console.log('Buy Now')}>
-                <Text style={styles.cartBtnText}>Buy Now</Text>
-              </TouchableOpacity>
-            </View>
-          )}
+              <View style={{flexDirection: 'row'}}>
+                <TouchableOpacity
+                  style={styles.add2CartBtn}
+                  onPress={() => console.log('Add to cart')}>
+                  <Text style={styles.cartBtnText}>Add To Cart</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.cartBtn}
+                  onPress={() => console.log('Buy Now')}>
+                  <Text style={styles.cartBtnText}>Buy Now</Text>
+                </TouchableOpacity>
+              </View>
+            ) && homeView ? (
+            <TouchableOpacity
+              style={styles.add2CartBtn}
+              onPress={() => console.log('Add to cart')}>
+              <Text style={styles.cartBtnText}>Add To Cart</Text>
+            </TouchableOpacity>
+          ) : null}
         </View>
-      </View>
+      </TouchableOpacity>
     );
   }
 }
