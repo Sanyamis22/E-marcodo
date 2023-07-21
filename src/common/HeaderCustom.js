@@ -8,6 +8,7 @@ import {
   Text,
   TouchableOpacity,
   Image,
+  TextInput,
 } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {appConfigStyle, appTextStyle} from '../common/Theme.style';
@@ -23,6 +24,7 @@ import {
   SET_LANGUAGE_ID,
   CLEAR_LANGUAGES,
   GRID_FLAG,
+  addSearchValue,
 } from '../redux/actions/actions';
 import SelectDropdown from 'react-native-select-dropdown';
 const WIDTH = Dimensions.get('window').width;
@@ -31,6 +33,8 @@ class Header extends PureComponent {
     super(props);
     this.state = {
       searchText: '',
+      searchString: '',
+      searchBox: '',
       categories: [
         'iPad',
         'Apple Display',
@@ -65,6 +69,13 @@ class Header extends PureComponent {
     this.props.clearLanguagesFun();
     this.props.getLanguageCall(this);
   }
+
+  onSearchPress = searchString => {
+    this.props.navigation.push('NewestScreen', {
+      searchString: this.state.searchBox,
+    });
+  };
+
   render(
     {
       name,
@@ -75,6 +86,13 @@ class Header extends PureComponent {
       shadow,
       showGrid = true,
       searchIcon,
+      language,
+      searchString,
+      setSearchState,
+      onSearchPress,
+      addSearchData,
+      notEditable,
+      th,
     } = this.props,
   ) {
     const parent = navigation.dangerouslyGetParent().state.index;
@@ -354,14 +372,21 @@ class Header extends PureComponent {
               <SelectDropdown
                 data={this.state.categories}
                 defaultButtonText={'Categories'}
-                onSelect={(selectedItem, index) => {
-                  console.log(selectedItem, index);
+                // onChangeSearchInputText={searchDropText => {
+                //   this.props.navigation.push('NewestScreen', {
+                //     searchString: searchDropText,
+                //   });
+                // }}
+                onSelect={searchDropText => {
+                  this.props.navigation.push('NewestScreen', {
+                    searchString: searchDropText,
+                  });
                 }}
-                buttonTextAfterSelection={(selectedItem, index) => {
-                  return selectedItem;
+                buttonTextAfterSelection={(searchText, index) => {
+                  return searchText;
                 }}
-                rowTextForSelection={(item, index) => {
-                  return item;
+                rowTextForSelection={(searchText, index) => {
+                  return searchText;
                 }}
                 buttonStyle={styles.categoryDropdownBtnStyle}
                 buttonTextStyle={styles.categoryDropdownBtnTxtStyle}
@@ -369,25 +394,44 @@ class Header extends PureComponent {
                 rowStyle={styles.categoryDropdownRowStyle}
                 rowTextStyle={styles.categoryDropdownRowTxtStyle}
               />
-              {/* <Text
-                style={{
-                  color: 'white',
-                  backgroundColor: 'black',
-                  margin: 1,
-                  fontSize: 9,
-                  paddingHorizontal: 15,
-                  paddingVertical: 4,
-                }}>
-                Categories
-              </Text> */}
+              <TextInput
+                onPress={() =>
+                  notEditable
+                    ? this.props.navigation.navigate('SearchScreen')
+                    : null
+                }
+                editable={!notEditable}
+                placeholder="Search"
+                returnKeyType={'search'}
+                onSubmitEditing={() => {
+                  addSearchData(searchString, th);
+                  this.onSearchPress(searchString);
+                }}
+                style={[
+                  styles.textinputStyle,
+                  {
+                    fontSize: appTextStyle.largeSize,
+                    color: this.props.themeStyle.textColor,
+                    backgroundColor: '#f6f6f6',
+                  },
+                ]}
+                placeholderTextColor={'#bdbdbd'}
+                selectionColor={this.props.themeStyle.iconPrimaryColor}
+                // placeholder={language['Search']}
+                onChangeText={searchText => {
+                  this.setState({searchBox: searchText});
+                }}
+                value={searchString}
+              />
               <TouchableOpacity
                 style={{
                   padding: 2,
                   backgroundColor: 'black',
                   margin: 1,
+                  right: 5,
                 }}
                 onPress={() => {
-                  this.props.navigation.navigate('SearchScreen');
+                  this.onSearchPress(searchString);
                 }}>
                 <Icon
                   name={'search'}
@@ -478,6 +522,7 @@ const mapDispatchToProps = dispatch => ({
       value: value,
     });
   },
+  addSearchData: (value, th) => dispatch(addSearchValue(value, th)),
   setLanguageIdFun: value => {
     dispatch({
       type: SET_LANGUAGE_ID,

@@ -27,7 +27,7 @@ class Header extends PureComponent {
     addSearchData, notEditable, th
   } = this.props) {
     return (
-      <TouchableOpacity
+      <TouchableOpacity 
         onPress={() => notEditable ? this.props.navigation.navigate('SearchScreen') : null}
         style={[styles.headerView]}>
 

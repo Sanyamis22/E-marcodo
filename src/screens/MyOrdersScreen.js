@@ -26,7 +26,7 @@ class Login extends Component {
     const headerStyle = navigation.getParam('headerTitle')
     const colorProps = navigation.getParam('colorProps')
     const iconColor = navigation.getParam('iconColor')
-    return {
+    return { 
       headerTitle: headerStyle,
       headerTitleAlign: 'center',
       headerTintColor: iconColor,

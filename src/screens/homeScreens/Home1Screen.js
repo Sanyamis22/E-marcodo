@@ -107,6 +107,7 @@ class Newest extends Component {
       headerTitle: this.props.language.Home,
     });
     if (Platform.OS === 'android') {
+      this._handleOfferProduct();
       const NativeLinking = require('react-native/Libraries/Linking/NativeLinking')
         .default;
       NativeLinking.getInitialURL().then(url => {
@@ -785,9 +786,9 @@ class Newest extends Component {
                       Most liked
                     </Text>
                   ) : null}
-                  <Text key={1} style={{color: 'black'}}>
+                  {/* <Text key={1} style={{color: 'black'}}>
                     See All
-                  </Text>
+                  </Text> */}
                 </View>
 
                 {/* <ScrollView key={8} horizontal={this.props.gridFlag}>
@@ -956,7 +957,75 @@ class Newest extends Component {
                           this.noProductFun()
                         )}
                       </View>
-                    ) : this.state.selectedTab === '1' ? (
+                    ) : this.state.selectedTab === '4' ? (
+                      <View
+                        style={{
+                          flexDirection: 'row',
+                          justifyContent: 'center',
+                          alignItems: 'center',
+                        }}>
+                        {/* {this.props.hotProducts !== undefined ? (
+                          <FlatListView
+                            vertical={true}
+                            noOfCol={1}
+                            dataName={'topSelling'}
+                            viewButton={false}
+                            navigation={this.props.navigation}
+                            cardStyle={this.props.settings.card_style}
+                            tabArray={
+                              this.props.hotProducts !== undefined &&
+                              this.props.hotProducts !== null
+                                ? this.props.hotProducts
+                                : []
+                            }
+                          />
+                        ) : (
+                          this.noProductFun()
+                        )} */}
+                        {this.state.onHotData.map((item, index) => {
+                          return (
+                            <ProductItem
+                              navigation={this.props.navigation}
+                              header={{
+                                rate: 50,
+                                option1: 'Best Seller',
+                                option2: 'New Arrival',
+                              }}
+                              headerShown={true}
+                              imgLink={{
+                                uri:
+                                  getThumbnailImage() +
+                                  item.product_gallary.gallary_name,
+                              }}
+                              title={item.detail[0].title}
+                              priceOld={item.product_price}
+                              priceCurrent={item.product_discount_price}
+                              favorite={false}
+                              grid={this.props.gridFlag}
+                              smallImageList={[
+                                {
+                                  uri:
+                                    getThumbnailImage() +
+                                    item.product_gallary_detail[0].gallary_name,
+                                },
+                                {
+                                  uri:
+                                    getThumbnailImage() +
+                                    item.product_gallary_detail[0].gallary_name,
+                                },
+                              ]}
+                              time={{
+                                days: 17,
+                                hrs: 17,
+                                mins: 17,
+                                seconds: 17,
+                              }}
+                              onAddCart={() => this.handleAddCart()}
+                            />
+                          );
+                        })}
+                      </View>
+                    ) : (
                       <View
                         style={{
                           flexDirection: 'row',
@@ -1036,75 +1105,7 @@ class Newest extends Component {
                           this.noProductFun()
                         )} */}
                       </View>
-                    ) : this.state.selectedTab === '4' ? (
-                      <View
-                        style={{
-                          flexDirection: 'row',
-                          justifyContent: 'center',
-                          alignItems: 'center',
-                        }}>
-                        {/* {this.props.hotProducts !== undefined ? (
-                          <FlatListView
-                            vertical={true}
-                            noOfCol={1}
-                            dataName={'topSelling'}
-                            viewButton={false}
-                            navigation={this.props.navigation}
-                            cardStyle={this.props.settings.card_style}
-                            tabArray={
-                              this.props.hotProducts !== undefined &&
-                              this.props.hotProducts !== null
-                                ? this.props.hotProducts
-                                : []
-                            }
-                          />
-                        ) : (
-                          this.noProductFun()
-                        )} */}
-                        {this.state.onHotData.map((item, index) => {
-                          return (
-                            <ProductItem
-                              navigation={this.props.navigation}
-                              header={{
-                                rate: 50,
-                                option1: 'Best Seller',
-                                option2: 'New Arrival',
-                              }}
-                              headerShown={true}
-                              imgLink={{
-                                uri:
-                                  getThumbnailImage() +
-                                  item.product_gallary.gallary_name,
-                              }}
-                              title={item.detail[0].title}
-                              priceOld={item.product_price}
-                              priceCurrent={item.product_discount_price}
-                              favorite={false}
-                              grid={this.props.gridFlag}
-                              smallImageList={[
-                                {
-                                  uri:
-                                    getThumbnailImage() +
-                                    item.product_gallary_detail[0].gallary_name,
-                                },
-                                {
-                                  uri:
-                                    getThumbnailImage() +
-                                    item.product_gallary_detail[0].gallary_name,
-                                },
-                              ]}
-                              time={{
-                                days: 17,
-                                hrs: 17,
-                                mins: 17,
-                                seconds: 17,
-                              }}
-                              onAddCart={() => this.handleAddCart()}
-                            />
-                          );
-                        })}
-                      </View>
-                    ) : null}
+                    )}
                     {console.log('hotty=>', this.props.hotProducts)}
                   </View>
 
@@ -1378,6 +1379,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.5,
     elevation: 3,
     margin: 5,
+    marginBottom: 20,
   },
   modalDetailContainer: {
     flexDirection: 'row',

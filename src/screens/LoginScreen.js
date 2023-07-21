@@ -96,7 +96,7 @@ class Login extends PureComponent {
       /// ////
 
       firstNameSignUp: '',
-      lastNameSignUp: '',
+      mobileNumber: '',
       userNamesignUp: '',
       email: '',
       emailSignUp: '',
@@ -297,7 +297,7 @@ class Login extends PureComponent {
       () => {
         this.props.signUpCall(
           this.state.firstNameSignUp,
-          this.state.lastNameSignUp,
+          this.state.mobileNumber,
           this.state.emailSignUp,
           this.state.passwordSignUp,
           this.state.confirmPasswordSignUp,
@@ -313,7 +313,7 @@ class Login extends PureComponent {
 
   canBeSubmitted() {
     const {
-      lastNameSignUp,
+      mobileNumber,
       firstNameSignUp,
       confirmPasswordSignUp,
       emailSignUp,
@@ -321,7 +321,7 @@ class Login extends PureComponent {
       genderSelect,
     } = this.state;
     return (
-      lastNameSignUp.length > 0 &&
+      mobileNumber.length > 0 &&
       firstNameSignUp.length > 0 &&
       this.EmailNumberCheckSignUp(emailSignUp) &&
       passwordSignUp.length >= 6 &&
@@ -636,10 +636,10 @@ class Login extends PureComponent {
                     }
                     selectionColor={this.props.themeStyle.iconPrimaryColor}
                     placeholder={this.props.language.Mobile}
-                    onChangeText={lastNameSignUp =>
-                      this.setState({lastNameSignUp, errorMessageSignUp: ''})
+                    onChangeText={mobileNumber =>
+                      this.setState({mobileNumber, errorMessageSignUp: ''})
                     }
-                    value={this.state.lastNameSignUp}
+                    value={this.state.mobileNumber}
                   />
                 </View>
 
@@ -1328,10 +1328,11 @@ class Login extends PureComponent {
 const mapDispatchToProps = dispatch => ({
   signUpCall: (
     firstNameSignUp,
-    lastNameSignUp,
+    mobileNumber,
     emailSignUp,
     passwordSignUp,
     confirmPasswordSignUp,
+    genderSelect,
     th,
     sessionId,
   ) => {
@@ -1339,10 +1340,11 @@ const mapDispatchToProps = dispatch => ({
       await signUp(
         dispatch,
         firstNameSignUp,
-        lastNameSignUp,
+        mobileNumber,
         emailSignUp,
         passwordSignUp,
         confirmPasswordSignUp,
+        genderSelect,
         th,
         sessionId,
       );

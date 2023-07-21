@@ -47,7 +47,10 @@ const PersonalInformationScreen = ({navigation}) => {
             </Text>
           </View>
         </TouchableOpacity>
-        <TouchableOpacity key={1} style={{}} onPress={() => {}}>
+        <TouchableOpacity
+          key={1}
+          style={{}}
+          onPress={() => navigation.navigate('AdressesScreen', {})}>
           <View
             key={1}
             style={{
@@ -114,7 +117,7 @@ const PersonalInformationScreen = ({navigation}) => {
         <TouchableOpacity
           key={2}
           style={{}}
-          onPress={() => navigation.navigate('Wallet', {})}>
+          onPress={() => navigation.navigate('MyOrdersScreen', {})}>
           <View
             key={2}
             style={{
@@ -131,7 +134,7 @@ const PersonalInformationScreen = ({navigation}) => {
             <Image
               style={{width: 50, height: 65, backgroundColor: 'white'}}
               source={require('../images/newImages/order_yellow.png')}
-              resizeMethod='auto'
+              resizeMethod="auto"
             />
             <Text
               style={{
@@ -177,7 +180,10 @@ const PersonalInformationScreen = ({navigation}) => {
             </Text>
           </View>
         </TouchableOpacity>
-        <TouchableOpacity key={4} style={{}} onPress={() => {}}>
+        <TouchableOpacity
+          key={4}
+          style={{}}
+          onPress={() => navigation.navigate('MyFavorites', {})}>
           <View
             key={4}
             style={{
