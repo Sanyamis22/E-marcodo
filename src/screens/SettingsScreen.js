@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-expressions */
-import React, { Component } from 'react'
+import React, {Component} from 'react';
 import {
   StyleSheet,
   Text,
@@ -12,70 +12,69 @@ import {
   I18nManager,
   SafeAreaView,
   Modal,
-  Image
-} from 'react-native'
-import Toast from 'react-native-easy-toast'
-import { createSelector } from 'reselect'
-import {
-  setModeValue,
-  logOut
-} from '../redux/actions/actions'
-import ImageLoad from '../common/RnImagePlaceH'
-import { CardStyleInterpolators } from 'react-navigation-stack'
-import { NavigationEvents } from 'react-navigation'
-import { appConfigStyle, appTextStyle } from '../common/Theme.style'
-import RateUsButton from './RateUs'
-import { Icon } from 'native-base'
-import { GoogleSignin } from '@react-native-google-signin/google-signin'
-import FontIcon from 'react-native-vector-icons/FontAwesome'
-import Ionicons from 'react-native-vector-icons/Ionicons'
-import { connect } from 'react-redux'
-import SyncStorage from 'sync-storage'
-import ShoppingCartIcon from '../common/ShoppingCartIcon1'
-import Spinner from 'react-native-loading-spinner-overlay'
-import { ScrollView } from 'react-native-gesture-handler'
+  Image,
+} from 'react-native';
+import Toast from 'react-native-easy-toast';
+import {createSelector} from 'reselect';
+import {setModeValue, logOut} from '../redux/actions/actions';
+import ImageLoad from '../common/RnImagePlaceH';
+import {CardStyleInterpolators} from 'react-navigation-stack';
+import {NavigationEvents} from 'react-navigation';
+import {appConfigStyle, appTextStyle} from '../common/Theme.style';
+import RateUsButton from './RateUs';
+import {Icon} from 'native-base';
+import {GoogleSignin} from '@react-native-google-signin/google-signin';
+import FontIcon from 'react-native-vector-icons/FontAwesome';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import {connect} from 'react-redux';
+import SyncStorage from 'sync-storage';
+import ShoppingCartIcon from '../common/ShoppingCartIcon1';
+import Spinner from 'react-native-loading-spinner-overlay';
+import {ScrollView} from 'react-native-gesture-handler';
 import {
   LoginManager,
   AccessToken,
   GraphRequestManager,
-  GraphRequest
-} from 'react-native-fbsdk'
-const WIDTH = Dimensions.get('window').width
-const HEIGHT = Dimensions.get('window').height
+  GraphRequest,
+} from 'react-native-fbsdk';
+const WIDTH = Dimensions.get('window').width;
+const HEIGHT = Dimensions.get('window').height;
 class CreateAccount extends Component {
   /// /////////////////////////////////////////////////////////
-  static navigationOptions = ({ navigation }) => {
-    const headerTitle = navigation.getParam('headerTitle')
-    const colorProps = navigation.getParam('colorProps')
-    const iconColor = navigation.getParam('iconColor')
+  static navigationOptions = ({navigation}) => {
+    const headerTitle = navigation.getParam('headerTitle');
+    const colorProps = navigation.getParam('colorProps');
+    const iconColor = navigation.getParam('iconColor');
     return {
       headerTitle: headerTitle,
       cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
-      headerLeft: () => <TouchableOpacity onPress={navigation.getParam('setModalFun')}>
-        <Ionicons
-          name={'settings-outline'}
-          style={{
-            color: iconColor,
-            fontSize: appTextStyle.largeSize + 4,
-            padding: 10
-          }}
-        />
-      </TouchableOpacity>,
+      headerLeft: () => (
+        <TouchableOpacity onPress={navigation.getParam('setModalFun')}>
+          <Ionicons
+            name={'settings-outline'}
+            style={{
+              color: iconColor,
+              fontSize: appTextStyle.largeSize + 4,
+              padding: 10,
+            }}
+          />
+        </TouchableOpacity>
+      ),
       headerTitleAlign: 'center',
       headerStyle: {
         backgroundColor: colorProps,
         elevation: 0, // remove shadow on Android
-        shadowOpacity: 0 // remove shadow on iOS
+        shadowOpacity: 0, // remove shadow on iOS
       },
       headerTitleStyle: {
         fontWeight: 'bold',
         fontSize: appTextStyle.largeSize + 2,
-        color: iconColor
+        color: iconColor,
       },
-      headerForceInset: { top: 'never', vertical: 'never' },
-      gestureEnabled: false
-    }
-  }
+      headerForceInset: {top: 'never', vertical: 'never'},
+      gestureEnabled: false,
+    };
+  };
 
   /// /////////////////////////////////////////////////////////
 
@@ -84,17 +83,17 @@ class CreateAccount extends Component {
       headerTitle: this.props.isLoading.appConfig.languageJson.Account,
       colorProps: this.props.themeStyle.primary,
       iconColor: this.props.themeStyle.textTintColor,
-      setModalFun: this.setModal
-    })
+      setModalFun: this.setModal,
+    });
   }
 
   setModal = () => {
-    this.setState({ isModalVisible: true })
+    this.setState({isModalVisible: true});
   };
 
   /// //////////////////////////////////////////////////////////
   constructor(props) {
-    super(props)
+    super(props);
     this.state = {
       firstName: '',
       lastName: '',
@@ -105,104 +104,108 @@ class CreateAccount extends Component {
       spinnerTemp: false,
       switch1Value: false,
       switch2Value: false,
-      isModalVisible: false
-    }
-    this.toast = null
+      isModalVisible: false,
+    };
+    this.toast = null;
   }
 
   /// ////////////////////////////////////////////////////
   toggleSwitch1 = value => {
-    this.props.setModeValue(!this.props.isDarkMode)
-    this.setState({ isModalVisible: false }, () => {
-      this.props.navigation.navigate('Home')
-    })
-  }
+    this.props.setModeValue(!this.props.isDarkMode);
+    this.setState({isModalVisible: false}, () => {
+      this.props.navigation.navigate('Home');
+    });
+  };
   /// /////////////////////////////////////////
 
   signOut = async () => {
     try {
-      await GoogleSignin.signOut()
-      await GoogleSignin.revokeAccess()
+      await GoogleSignin.signOut();
+      await GoogleSignin.revokeAccess();
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
   };
 
   checkShareComponent = (heading, points, icon, backColor, borderColor) => (
-    <TouchableOpacity style={{
-      width: WIDTH * 0.45,
-      backgroundColor: backColor,
-      flexDirection: 'row',
-      borderRadius: 4,
-      margin: 8,
-      padding: 5,
-      paddingHorizontal: 0,
-      borderWidth: 1,
-      borderColor: borderColor
-    }}>
-
-      <View style={{ padding: 18 }}>
+    <TouchableOpacity
+      style={{
+        width: WIDTH * 0.45,
+        backgroundColor: backColor,
+        flexDirection: 'row',
+        borderRadius: 4,
+        margin: 8,
+        padding: 5,
+        paddingHorizontal: 0,
+        borderWidth: 1,
+        borderColor: borderColor,
+      }}>
+      <View style={{padding: 18}}>
         <Text
           style={{
             color: '#000',
             fontSize: appTextStyle.mediumSize,
             fontFamily: appTextStyle.fontFamily,
-            paddingBottom: 6
+            paddingBottom: 6,
           }}>
           {heading}
         </Text>
 
-        <Text style={{
-          color: this.props.themeStyle.primary,
-          fontSize: appTextStyle.smallSize - 1,
-          fontFamily: appTextStyle.fontFamily
-        }}>
+        <Text
+          style={{
+            color: this.props.themeStyle.primary,
+            fontSize: appTextStyle.smallSize - 1,
+            fontFamily: appTextStyle.fontFamily,
+          }}>
           {points}
         </Text>
       </View>
 
-      <View style={{
-        backgroundColor: borderColor,
-        padding: 12,
-        alignSelf: 'center',
-        borderRadius: 30,
-        right: 10,
-        position: 'absolute'
-      }}>
-        <Image style={{ height: 28, width: 30 }}
-          source={icon}
-        />
+      <View
+        style={{
+          backgroundColor: borderColor,
+          padding: 12,
+          alignSelf: 'center',
+          borderRadius: 30,
+          right: 10,
+          position: 'absolute',
+        }}>
+        <Image style={{height: 28, width: 30}} source={icon} />
       </View>
-
     </TouchableOpacity>
-  )
+  );
 
   pointsComponent = (value, text) => (
-    <View style={{
-      justifyContent: 'center',
-      alignItems: 'center'
-    }}>
-      <Text style={{
-        textAlign: 'center',
-        color: this.props.themeStyle.textTintColor,
-        fontSize: this.props.language.Wallat === text
-          ? appTextStyle.largeSize + 8
-          : appTextStyle.largeSize + 3,
-        fontFamily: appTextStyle.fontFamily
+    <View
+      style={{
+        justifyContent: 'center',
+        alignItems: 'center',
       }}>
+      <Text
+        style={{
+          textAlign: 'center',
+          color: this.props.themeStyle.textTintColor,
+          fontSize:
+            this.props.language.Wallat === text
+              ? appTextStyle.largeSize + 8
+              : appTextStyle.largeSize + 3,
+          fontFamily: appTextStyle.fontFamily,
+        }}>
         {this.props.language.Wallat === text
-          ? this.props.settings.currency_symbol + value : value}
+          ? this.props.settings.currency_symbol + value
+          : value}
       </Text>
-      <Text style={{
-        textAlign: 'center',
-        color: this.props.themeStyle.textTintColor,
-        fontSize: appTextStyle.smallSize,
-        fontFamily: appTextStyle.fontFamily
-      }}>
+      <Text
+        style={{
+          textAlign: 'center',
+          color: this.props.themeStyle.textTintColor,
+          fontSize: appTextStyle.smallSize,
+          fontFamily: appTextStyle.fontFamily,
+        }}>
         {text}
       </Text>
     </View>
-  )
+  );
 
   /// ////////////////////////////////////////////
   categoryFun(text, iconName, nav, font, borderWidth) {
@@ -217,77 +220,87 @@ class CreateAccount extends Component {
             paddingBottom: 0,
             paddingTop: 0,
             width: WIDTH * 0.94,
-            alignSelf: 'center'
+            alignSelf: 'center',
           }}>
           {nav === 'rate1' ? (
-            <RateUsButton
-              text={text}
-              iconName={iconName}
-            />
+            <RateUsButton text={text} iconName={iconName} />
           ) : (
             <TouchableOpacity
               activeOpacity={0.8}
               style={{
                 flexDirection: 'row',
                 justifyContent: 'space-between',
-                alignItems: 'center'
+                alignItems: 'center',
               }}
               onPress={() => {
                 text ===
-                  this.props.isLoading.appConfig.languageJson['Official Website']
+                this.props.isLoading.appConfig.languageJson['Official Website']
                   ? Linking.openURL(nav)
                   : text !==
-                    this.props.isLoading.appConfig.languageJson[
-                    'Dark Mode'
-                    ] &&
+                      this.props.isLoading.appConfig.languageJson[
+                        'Dark Mode'
+                      ] &&
                     text !==
-                    this.props.isLoading.appConfig.languageJson[
-                    'Light Mode'
-                    ] ? this.setState({
-                      isModalVisible: false
-                    }, () => {
-                      this.props.navigation.navigate(nav)
-                    }) : null
+                      this.props.isLoading.appConfig.languageJson['Light Mode']
+                  ? this.setState(
+                      {
+                        isModalVisible: false,
+                      },
+                      () => {
+                        this.props.navigation.navigate(nav);
+                      },
+                    )
+                  : null;
               }}>
               <View style={styles.tabComponents}>
-                <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
-                  <Text style={{
-                    fontSize: appTextStyle.mediumSize + 1,
-                    fontFamily: appTextStyle.fontFamily,
-                    color: this.props.themeStyle.textColor
-                  }}>{text}</Text>
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                  }}>
+                  <Text
+                    style={{
+                      fontSize: appTextStyle.mediumSize + 1,
+                      fontFamily: appTextStyle.fontFamily,
+                      color: this.props.themeStyle.textColor,
+                    }}>
+                    {text}
+                  </Text>
                 </View>
 
                 {text ===
-                  this.props.isLoading.appConfig.languageJson[
-                  'Dark Mode'
-                  ] ? (
-                  <View style={{ marginLeft: 60, position: 'absolute', right: 0 }}>
+                this.props.isLoading.appConfig.languageJson['Dark Mode'] ? (
+                  <View
+                    style={{marginLeft: 60, position: 'absolute', right: 0}}>
                     <Switch
                       thumbColor={this.props.themeStyle.primary}
-                      style={{ transform: [{ scaleX: 0.5 }, { scaleY: 0.5 }] }}
+                      style={{transform: [{scaleX: 0.5}, {scaleY: 0.5}]}}
                       onValueChange={() => this.toggleSwitch1(false)}
                       value={this.state.switch1Value}
                     />
                   </View>
                 ) : text ===
-                  this.props.isLoading.appConfig.languageJson[
-                  'Light Mode'
-                  ] ? (
-                  <View style={{ marginLeft: 60, position: 'absolute', right: 0 }}>
+                  this.props.isLoading.appConfig.languageJson['Light Mode'] ? (
+                  <View
+                    style={{marginLeft: 60, position: 'absolute', right: 0}}>
                     <Switch
                       thumbColor={this.props.themeStyle.primary}
-                      style={{ transform: [{ scaleX: 0.5 }, { scaleY: 0.5 }] }}
+                      style={{transform: [{scaleX: 0.5}, {scaleY: 0.5}]}}
                       onValueChange={() => this.toggleSwitch1(true)}
                       value={this.state.switch2Value}
                     />
                   </View>
                 ) : (
                   <Ionicons
-                    name={I18nManager.isRTL ? 'chevron-back-outline' : 'chevron-forward-outline'}
+                    name={
+                      I18nManager.isRTL
+                        ? 'chevron-back-outline'
+                        : 'chevron-forward-outline'
+                    }
                     style={{
                       color: this.props.themeStyle.iconPrimaryColor,
-                      fontSize: appTextStyle.largeSize
+                      fontSize: appTextStyle.largeSize,
                     }}
                   />
                 )}
@@ -295,16 +308,17 @@ class CreateAccount extends Component {
             </TouchableOpacity>
           )}
         </View>
-        {!borderWidth
-          ? <View
+        {!borderWidth ? (
+          <View
             style={{
               width: WIDTH * 0.9299,
               height: 1,
-              backgroundColor: this.props.themeStyle.primary
+              backgroundColor: this.props.themeStyle.primary,
             }}
-          /> : null}
+          />
+        ) : null}
       </View>
-    )
+    );
   }
 
   /// /////////////////////////////////////////////
@@ -313,80 +327,89 @@ class CreateAccount extends Component {
       <View
         style={{
           flex: 1,
-          backgroundColor: this.props.themeStyle.secondryBackgroundColor
+          backgroundColor: this.props.themeStyle.secondryBackgroundColor,
         }}>
-
-        <ScrollView style={{ flex: 1 }} showsVerticalScrollIndicator={false}>
+        <ScrollView style={{flex: 1}} showsVerticalScrollIndicator={false}>
           <Toast
-            ref={ref => { this.toast = ref }}
-            style={{ backgroundColor: this.props.themeStyle.iconPrimaryColor }}
-            position='top'
+            ref={ref => {
+              this.toast = ref;
+            }}
+            style={{backgroundColor: this.props.themeStyle.iconPrimaryColor}}
+            position="top"
             positionValue={400}
             fadeOutDuration={7000}
-            textStyle={{ color: this.props.themeStyle.textColor, fontSize: 15 }}
+            textStyle={{color: this.props.themeStyle.textColor, fontSize: 15}}
           />
-          <Modal onRequestClose={() => {
-            this.setState({
-              isModalVisible: false
-            })
-          }} visible={this.state.isModalVisible} animationType={'fade'}>
-
-            <SafeAreaView style={[styles.modalContainer, { backgroundColor: this.props.themeStyle.secondryBackgroundColor }]}>
-
-              <View style={{
-                flexDirection: 'row',
-                alignItems: 'center',
-                width: WIDTH
-              }}>
-
-                <TouchableOpacity style={{
-                  zIndex: 12
-                }} onPress={() => this.setState({
-                  isModalVisible: false
-                })}>
+          <Modal
+            onRequestClose={() => {
+              this.setState({
+                isModalVisible: false,
+              });
+            }}
+            visible={this.state.isModalVisible}
+            animationType={'fade'}>
+            <SafeAreaView
+              style={[
+                styles.modalContainer,
+                {
+                  backgroundColor: this.props.themeStyle
+                    .secondryBackgroundColor,
+                },
+              ]}>
+              <View
+                style={{
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  width: WIDTH,
+                }}>
+                <TouchableOpacity
+                  style={{
+                    zIndex: 12,
+                  }}
+                  onPress={() =>
+                    this.setState({
+                      isModalVisible: false,
+                    })
+                  }>
                   <Ionicons
                     name={'close'}
                     style={{
                       color: this.props.themeStyle.textColor,
                       fontSize: appTextStyle.largeSize + 6,
-                      padding: 15
+                      padding: 15,
                     }}
                   />
                 </TouchableOpacity>
-                <Text style={{
-                  fontSize: appTextStyle.largeSize + 2,
-                  fontFamily: appTextStyle.fontFamily,
-                  color: this.props.themeStyle.textColor,
-                  alignSelf: 'center',
-                  position: 'absolute',
-                  width: WIDTH,
-                  textAlign: 'center',
-                  fontWeight: 'bold'
-
-                }}>
-                  {
-                    this.props.isLoading.appConfig.languageJson.Settings
-                  }
+                <Text
+                  style={{
+                    fontSize: appTextStyle.largeSize + 2,
+                    fontFamily: appTextStyle.fontFamily,
+                    color: this.props.themeStyle.textColor,
+                    alignSelf: 'center',
+                    position: 'absolute',
+                    width: WIDTH,
+                    textAlign: 'center',
+                    fontWeight: 'bold',
+                  }}>
+                  {this.props.isLoading.appConfig.languageJson.Settings}
                 </Text>
               </View>
 
-              <View style={{
-                borderRadius: appTextStyle.customRadius,
-                backgroundColor: this.props.themeStyle.primaryBackgroundColor,
-                width: WIDTH * 0.93,
-                alignSelf: 'center',
-                borderWidth: 1,
-                borderColor: this.props.themeStyle.primary
-              }}>
-
-                {this.categoryFun(!this.props.isDarkMode
-                  ? this.props.isLoading.appConfig.languageJson[
-                  'Dark Mode'
-                  ] : this.props.isLoading.appConfig.languageJson[
-                  'Light Mode'
-                  ],
+              <View
+                style={{
+                  borderRadius: appTextStyle.customRadius,
+                  backgroundColor: this.props.themeStyle.primaryBackgroundColor,
+                  width: WIDTH * 0.93,
+                  alignSelf: 'center',
+                  borderWidth: 1,
+                  borderColor: this.props.themeStyle.primary,
+                }}>
+                {this.categoryFun(
+                  !this.props.isDarkMode
+                    ? this.props.isLoading.appConfig.languageJson['Dark Mode']
+                    : this.props.isLoading.appConfig.languageJson['Light Mode'],
                   'globe',
-                  'LanguageScreen'
+                  'LanguageScreen',
                 )}
 
                 {/* {this.categoryFun(
@@ -395,31 +418,34 @@ class CreateAccount extends Component {
                   'LanguageScreen'
                 )} */}
                 {this.categoryFun(
-                  this.props.isLoading.appConfig.languageJson['Select Currency'],
+                  this.props.isLoading.appConfig.languageJson[
+                    'Select Currency'
+                  ],
                   'logo-usd',
-                  'CurrencyScreen'
+                  'CurrencyScreen',
                 )}
                 {this.categoryFun(
                   this.props.isLoading.appConfig.languageJson['About Us'],
                   'md-albums',
-                  'AboutScreen'
+                  'AboutScreen',
                 )}
                 {this.categoryFun(
                   this.props.isLoading.appConfig.languageJson['Privacy Policy'],
                   'cart',
-                  'PrivacyPolicyScreen'
-                )
-                }
+                  'PrivacyPolicyScreen',
+                )}
                 {this.categoryFun(
-                  this.props.isLoading.appConfig.languageJson['Term and Services'],
+                  this.props.isLoading.appConfig.languageJson[
+                    'Term and Services'
+                  ],
                   'md-call',
-                  'TermAndServiceScreen'
+                  'TermAndServiceScreen',
                 )}
 
                 {this.categoryFun(
                   this.props.isLoading.appConfig.languageJson['Refund Policy'],
                   'md-albums',
-                  'RefundPolicy'
+                  'RefundPolicy',
                 )}
 
                 {this.categoryFun(
@@ -427,77 +453,78 @@ class CreateAccount extends Component {
                   'md-call',
                   'ContactUsScreen',
                   false,
-                  true
+                  true,
                 )}
               </View>
 
-              {this.props.userData !== undefined
-
-                ? Object.keys(this.props.userData).length !== 0
-                  ? (
-                    <TouchableOpacity
-                      style={{
-                        paddingTop: 25,
-                        alignSelf: 'center',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        borderRadius: appTextStyle.customRadius
-                      }}
-                      onPress={() => {
-                        this.setState({
+              {this.props.userData !== undefined ? (
+                Object.keys(this.props.userData).length !== 0 ? (
+                  <TouchableOpacity
+                    style={{
+                      paddingTop: 25,
+                      alignSelf: 'center',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      borderRadius: appTextStyle.customRadius,
+                    }}
+                    onPress={() => {
+                      this.setState(
+                        {
                           spinnerTemp: true,
-                          isModalVisible: false
-                        }, () => {
-                          this.props.logOutCall(this)
-                          let currentAccessToken = ''
+                          isModalVisible: false,
+                        },
+                        () => {
+                          this.props.logOutCall(this);
+                          let currentAccessToken = '';
                           AccessToken.getCurrentAccessToken()
                             .then(data => {
-                              currentAccessToken = data.accessToken.toString()
+                              currentAccessToken = data.accessToken.toString();
                             })
                             .then(() => {
                               const logout = new GraphRequest(
                                 'me/permissions/',
                                 {
                                   accessToken: currentAccessToken,
-                                  httpMethod: 'DELETE'
+                                  httpMethod: 'DELETE',
                                 },
                                 error => {
                                   if (error) {
                                   } else {
-                                    LoginManager.logOut()
+                                    LoginManager.logOut();
                                   }
-                                }
-                              )
-                              new GraphRequestManager().addRequest(logout).start()
+                                },
+                              );
+                              new GraphRequestManager()
+                                .addRequest(logout)
+                                .start();
                             })
-                            .catch(() => {
-                            })
-                          this.signOut()
-                        })
-                      }}
-                    >
-                      <View
+                            .catch(() => {});
+                          this.signOut();
+                        },
+                      );
+                    }}>
+                    <View
+                      style={{
+                        alignItems: 'center',
+                        width: WIDTH * 0.93,
+                        backgroundColor: this.props.themeStyle.primary,
+                        justifyContent: 'center',
+                        borderRadius: appTextStyle.customRadius,
+                      }}>
+                      <Text
                         style={{
-                          alignItems: 'center',
-                          width: WIDTH * 0.93,
-                          backgroundColor: this.props.themeStyle.primary,
-                          justifyContent: 'center',
-                          borderRadius: appTextStyle.customRadius
-
+                          textAlign: 'center',
+                          fontFamily: appTextStyle.fontFamily,
+                          fontSize: appTextStyle.largeSize,
+                          color: this.props.themeStyle.textTintColor,
+                          padding: 10,
                         }}>
-                        <Text
-                          style={{
-                            textAlign: 'center',
-                            fontFamily: appTextStyle.fontFamily,
-                            fontSize: appTextStyle.largeSize,
-                            color: this.props.themeStyle.textTintColor,
-                            padding: 10
-                          }}>
-                          {this.props.isLoading.appConfig.languageJson['Log Out']}
-                        </Text>
-                      </View>
-                    </TouchableOpacity>
-                  ) : null : null}
+                        {this.props.isLoading.appConfig.languageJson['Log Out']}
+                      </Text>
+                    </View>
+                  </TouchableOpacity>
+                ) : null
+              ) : null}
             </SafeAreaView>
           </Modal>
           <View
@@ -506,7 +533,7 @@ class CreateAccount extends Component {
               backgroundColor: this.props.themeStyle.secondryBackgroundColor,
               justifyContent: 'space-between',
               alignItems: 'center',
-              paddingBottom: 30
+              paddingBottom: 30,
             }}>
             <Spinner
               visible={this.state.spinnerTemp}
@@ -514,7 +541,7 @@ class CreateAccount extends Component {
             />
             <NavigationEvents
               onDidFocus={() => {
-                this.setState({})
+                this.setState({});
               }}
             />
             <View
@@ -522,44 +549,46 @@ class CreateAccount extends Component {
                 flex: 1,
                 backgroundColor: this.props.themeStyle.primary,
                 justifyContent: 'space-between',
-                alignItems: 'center'
+                alignItems: 'center',
               }}>
               <TouchableOpacity
                 onPress={() => {
-                  SyncStorage.set('cartScreen', 0)
+                  SyncStorage.set('cartScreen', 0);
                   if (
                     SyncStorage.get('customerData') !== '' &&
-                    !SyncStorage.get('gustLogin')) { } else {
+                    !SyncStorage.get('gustLogin')
+                  ) {
+                  } else {
                     this.props.navigation.navigate('LOGIN', {
-                      updateCart: () => this.setState({})
-                    })
+                      updateCart: () => this.setState({}),
+                    });
                   }
                 }}>
                 <View
                   style={{
                     height: 100,
                     width: WIDTH,
-                    backgroundColor: this.props.themeStyle.primary
-                  }} >
+                    backgroundColor: this.props.themeStyle.primary,
+                  }}>
                   <View style={styles.textImageContainer}>
                     <ImageLoad
                       key={0}
                       style={{
                         width: 50,
                         height: 50,
-                        borderRadius: 30
+                        borderRadius: 30,
                       }}
-
                       source={require('../images/avatar.png')}
                       borderRadius={50 / 2}
                     />
                     <View>
-
                       <TouchableOpacity
                         onPress={() => {
-                          if (Object.keys(this.props.userData).length === 0) { this.props.navigation.navigate('LOGIN') }
+                          if (Object.keys(this.props.userData).length === 0) {
+                            this.props.navigation.navigate('LOGIN');
+                          }
                         }}>
-                        <Text style={{
+                        {/* <Text style={{
                           fontSize: appTextStyle.largeSize + 2,
                           fontFamily: appTextStyle.fontFamily,
                           fontWeight: '600',
@@ -579,10 +608,27 @@ class CreateAccount extends Component {
                               'Login & Register'
                               ]
                           }
+                        </Text> */}
+                        <Text
+                          style={{
+                            fontSize: appTextStyle.largeSize + 2,
+                            fontFamily: appTextStyle.fontFamily,
+                            fontWeight: '600',
+                            color: this.props.themeStyle.textTintColor,
+                            paddingTop: 0,
+                            marginLeft: 15,
+                          }}>
+                          {this.props.userData !== undefined
+                            ? Object.keys(this.props.userData).length === 0
+                              ? this.props.isLoading.appConfig.languageJson[
+                                  'Login & Register'
+                                ]
+                              : this.props.userData.first_name
+                            : this.props.isLoading.appConfig.languageJson[
+                                'Login & Register'
+                              ]}
                         </Text>
-
                       </TouchableOpacity>
-
                     </View>
                   </View>
                 </View>
@@ -605,7 +651,6 @@ class CreateAccount extends Component {
                   }
                 </View> */}
               </TouchableOpacity>
-
             </View>
 
             {/* <View style={{
@@ -691,33 +736,34 @@ class CreateAccount extends Component {
 
             {/* ///////////////////////////// */}
 
-            <View style={{
-              backgroundColor: appConfigStyle.settingsPageColor ? '#eaf3de'
-                : this.props.themeStyle.primaryBackgroundColor,
-              width: '94%',
-              height: HEIGHT * 0.1,
-              alignItems: 'center',
-              justifyContent: 'center',
-              borderRadius: 4,
-              marginTop: 16,
-              borderWidth: appConfigStyle.settingsPageColor ? 1 : 0,
-              borderColor: '#afdf93',
-              paddingTop: Platform.OS === 'android' ? '12%' : '10%',
+            <View
+              style={{
+                backgroundColor: appConfigStyle.settingsPageColor
+                  ? '#eaf3de'
+                  : this.props.themeStyle.primaryBackgroundColor,
+                width: '94%',
+                height: HEIGHT * 0.1,
+                alignItems: 'center',
+                justifyContent: 'center',
+                borderRadius: 4,
+                marginTop: 16,
+                borderWidth: appConfigStyle.settingsPageColor ? 1 : 0,
+                borderColor: '#afdf93',
+                paddingTop: Platform.OS === 'android' ? '12%' : '10%',
 
-              shadowOffset: { width: 1, height: 1 },
-              shadowColor: '#000',
-              shadowOpacity: appConfigStyle.settingsPageColor ? 0 : 0.2,
-              elevation: appConfigStyle.settingsPageColor ? 0 : 2
-            }}>
-
+                shadowOffset: {width: 1, height: 1},
+                shadowColor: '#000',
+                shadowOpacity: appConfigStyle.settingsPageColor ? 0 : 0.2,
+                elevation: appConfigStyle.settingsPageColor ? 0 : 2,
+              }}>
               <TouchableOpacity
                 onPress={() => {
                   if (Object.keys(this.props.userData).length !== 0) {
                     this.props.navigation.navigate('MyOrdersScreen', {
-                      selectedTab: '1'
-                    })
+                      selectedTab: '1',
+                    });
                   } else {
-                    this.props.navigation.navigate('LOGIN')
+                    this.props.navigation.navigate('LOGIN');
                   }
                 }}
                 style={{
@@ -728,141 +774,177 @@ class CreateAccount extends Component {
                   paddingTop: 0,
                   alignItems: 'center',
                   marginTop: Platform.OS === 'android' ? -45 : -42,
-                  marginBottom: '2%'
+                  marginBottom: '2%',
                 }}>
-                <Text style={{
-                  color: appConfigStyle.settingsPageColor ? '#444444' : this.props.themeStyle.textColor,
-                  fontSize: appTextStyle.mediumSize,
-                  fontFamily: appTextStyle.fontFamily
-                }}>{this.props.language['My Orders']}</Text>
-
-                <View style={{
-                  flexDirection: 'row',
-                  justifyContent: 'center',
-                  alignItems: 'center'
-                }}>
-                  <Text style={{
-                    color: appConfigStyle.settingsPageColor ? '#444444' : this.props.themeStyle.textColor,
-                    fontSize: appTextStyle.smallSize,
+                <Text
+                  style={{
+                    color: appConfigStyle.settingsPageColor
+                      ? '#444444'
+                      : this.props.themeStyle.textColor,
+                    fontSize: appTextStyle.mediumSize,
                     fontFamily: appTextStyle.fontFamily,
-                    paddingLeft: 5,
-                    paddingRight: 5
-                  }}>{this.props.language['View All']}</Text>
+                  }}>
+                  {this.props.language['My Orders']}
+                </Text>
+
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                  }}>
+                  <Text
+                    style={{
+                      color: appConfigStyle.settingsPageColor
+                        ? '#444444'
+                        : this.props.themeStyle.textColor,
+                      fontSize: appTextStyle.smallSize,
+                      fontFamily: appTextStyle.fontFamily,
+                      paddingLeft: 5,
+                      paddingRight: 5,
+                    }}>
+                    {this.props.language['View All']}
+                  </Text>
 
                   <FontIcon
                     name={I18nManager.isRTL ? 'chevron-left' : 'chevron-right'}
                     style={{
-                      color: appConfigStyle.settingsPageColor ? '#444444' : this.props.themeStyle.textColor,
-                      fontSize: appTextStyle.mediumSize - 5
+                      color: appConfigStyle.settingsPageColor
+                        ? '#444444'
+                        : this.props.themeStyle.textColor,
+                      fontSize: appTextStyle.mediumSize - 5,
                     }}
                   />
                 </View>
               </TouchableOpacity>
 
-              <View style={{
-                width: '100%',
-                flexDirection: 'row',
-                justifyContent: 'space-around',
-                alignItems: 'center'
-              }}>
+              <View
+                style={{
+                  width: '100%',
+                  flexDirection: 'row',
+                  justifyContent: 'space-around',
+                  alignItems: 'center',
+                }}>
                 <TouchableOpacity
                   onPress={() => {
                     if (Object.keys(this.props.userData).length !== 0) {
                       this.props.navigation.navigate('MyOrdersScreen', {
-                        selectedTab: '1'
-                      })
+                        selectedTab: '1',
+                      });
                     } else {
-                      this.props.navigation.navigate('LOGIN')
+                      this.props.navigation.navigate('LOGIN');
                     }
-                  }} style={{ justifyContent: 'center', alignItems: 'center' }}>
+                  }}
+                  style={{justifyContent: 'center', alignItems: 'center'}}>
                   <Ionicons
                     name={'cube-outline'}
                     style={{
-                      color: appConfigStyle.settingsPageColor ? '#444444' : this.props.themeStyle.textColor,
-                      fontSize: appTextStyle.largeSize + 16
+                      color: appConfigStyle.settingsPageColor
+                        ? '#444444'
+                        : this.props.themeStyle.textColor,
+                      fontSize: appTextStyle.largeSize + 16,
                     }}
                   />
-                  <Text style={{
-                    color: appConfigStyle.settingsPageColor ? '#444444' : this.props.themeStyle.textColor,
-                    fontSize: appTextStyle.mediumSize,
-                    fontFamily: appTextStyle.fontFamily
-                  }}>{this.props.language.InProgress}</Text>
+                  <Text
+                    style={{
+                      color: appConfigStyle.settingsPageColor
+                        ? '#444444'
+                        : this.props.themeStyle.textColor,
+                      fontSize: appTextStyle.mediumSize,
+                      fontFamily: appTextStyle.fontFamily,
+                    }}>
+                    {this.props.language.InProgress}
+                  </Text>
                 </TouchableOpacity>
                 <TouchableOpacity
                   onPress={() => {
                     if (Object.keys(this.props.userData).length !== 0) {
                       this.props.navigation.navigate('MyOrdersScreen', {
-                        selectedTab: '2'
-                      })
+                        selectedTab: '2',
+                      });
                     } else {
-                      this.props.navigation.navigate('LOGIN')
+                      this.props.navigation.navigate('LOGIN');
                     }
                   }}
-                  style={{ justifyContent: 'center', alignItems: 'center' }}>
+                  style={{justifyContent: 'center', alignItems: 'center'}}>
                   <Ionicons
                     name={'airplane-outline'}
                     style={{
-                      color: appConfigStyle.settingsPageColor ? '#444444' : this.props.themeStyle.textColor,
-                      fontSize: appTextStyle.largeSize + 16
+                      color: appConfigStyle.settingsPageColor
+                        ? '#444444'
+                        : this.props.themeStyle.textColor,
+                      fontSize: appTextStyle.largeSize + 16,
                     }}
                   />
-                  <Text style={{
-                    color: appConfigStyle.settingsPageColor ? '#444444' : this.props.themeStyle.textColor,
-                    fontSize: appTextStyle.mediumSize,
-                    fontFamily: appTextStyle.fontFamily
-                  }}>{this.props.language.Delivered}</Text>
+                  <Text
+                    style={{
+                      color: appConfigStyle.settingsPageColor
+                        ? '#444444'
+                        : this.props.themeStyle.textColor,
+                      fontSize: appTextStyle.mediumSize,
+                      fontFamily: appTextStyle.fontFamily,
+                    }}>
+                    {this.props.language.Delivered}
+                  </Text>
                 </TouchableOpacity>
                 <TouchableOpacity
                   onPress={() => {
                     if (Object.keys(this.props.userData).length !== 0) {
                       this.props.navigation.navigate('MyOrdersScreen', {
-                        selectedTab: '3'
-                      })
+                        selectedTab: '3',
+                      });
                     } else {
-                      this.props.navigation.navigate('LOGIN')
+                      this.props.navigation.navigate('LOGIN');
                     }
                   }}
-                  style={{ justifyContent: 'center', alignItems: 'center' }}>
+                  style={{justifyContent: 'center', alignItems: 'center'}}>
                   <Ionicons
                     name={'chatbox-ellipses-outline'}
                     style={{
-                      color: appConfigStyle.settingsPageColor ? '#444444' : this.props.themeStyle.textColor,
-                      fontSize: appTextStyle.largeSize + 16
+                      color: appConfigStyle.settingsPageColor
+                        ? '#444444'
+                        : this.props.themeStyle.textColor,
+                      fontSize: appTextStyle.largeSize + 16,
                     }}
                   />
-                  <Text style={{
-                    color: appConfigStyle.settingsPageColor ? '#444444' : this.props.themeStyle.textColor,
-                    fontSize: appTextStyle.mediumSize,
-                    fontFamily: appTextStyle.fontFamily
-                  }}>{this.props.language.Reviews}</Text>
+                  <Text
+                    style={{
+                      color: appConfigStyle.settingsPageColor
+                        ? '#444444'
+                        : this.props.themeStyle.textColor,
+                      fontSize: appTextStyle.mediumSize,
+                      fontFamily: appTextStyle.fontFamily,
+                    }}>
+                    {this.props.language.Reviews}
+                  </Text>
                 </TouchableOpacity>
-
               </View>
-
             </View>
 
             <View height={1} />
             {/* {Object.keys(this.props.userData).length !== 0
               ?  */}
-            <View style={{
-              width: '94%',
-              borderRadius: 4,
-              height: Platform.OS === 'android' ? HEIGHT * 0.3 : HEIGHT * 0.26, // for two rows              // height: HEIGHT * 0.1,
-              alignItems: 'center',
-              justifyContent: 'center',
-              marginTop: '3%',
-              paddingTop: Platform.OS === 'android' ? '16%' : '13%',
-              backgroundColor: appConfigStyle.settingsPageColor ? '#fbe5e2'
-                : this.props.themeStyle.primaryBackgroundColor,
-              borderWidth: appConfigStyle.settingsPageColor ? 1 : 0,
-              borderColor: '#ffd8d2',
+            <View
+              style={{
+                width: '94%',
+                borderRadius: 4,
+                height:
+                  Platform.OS === 'android' ? HEIGHT * 0.3 : HEIGHT * 0.26, // for two rows              // height: HEIGHT * 0.1,
+                alignItems: 'center',
+                justifyContent: 'center',
+                marginTop: '3%',
+                paddingTop: Platform.OS === 'android' ? '16%' : '13%',
+                backgroundColor: appConfigStyle.settingsPageColor
+                  ? '#fbe5e2'
+                  : this.props.themeStyle.primaryBackgroundColor,
+                borderWidth: appConfigStyle.settingsPageColor ? 1 : 0,
+                borderColor: '#ffd8d2',
 
-              shadowOffset: { width: 1, height: 1 },
-              shadowColor: '#000',
-              shadowOpacity: appConfigStyle.settingsPageColor ? 0 : 0.2,
-              elevation: appConfigStyle.settingsPageColor ? 0 : 2
-            }}>
-
+                shadowOffset: {width: 1, height: 1},
+                shadowColor: '#000',
+                shadowOpacity: appConfigStyle.settingsPageColor ? 0 : 0.2,
+                elevation: appConfigStyle.settingsPageColor ? 0 : 2,
+              }}>
               <TouchableOpacity
                 style={{
                   flexDirection: 'row',
@@ -872,139 +954,194 @@ class CreateAccount extends Component {
                   paddingTop: 0,
                   alignItems: 'center',
                   marginTop: Platform.OS === 'android' ? -52 : -42,
-                  marginBottom: 5
+                  marginBottom: 5,
                 }}>
-                <Text style={{
-                  color: appConfigStyle.settingsPageColor ? '#444444' : this.props.themeStyle.textColor,
-                  fontSize: appTextStyle.mediumSize,
-                  fontFamily: appTextStyle.fontFamily
-                }}>{this.props.language['Help & info']}</Text>
-
-                <View style={{
-                  flexDirection: 'row',
-                  justifyContent: 'center',
-                  alignItems: 'center'
-                }}>
-                  <Text style={{
-                    color: appConfigStyle.settingsPageColor ? '#444444' : this.props.themeStyle.textColor,
-                    fontSize: appTextStyle.smallSize,
+                <Text
+                  style={{
+                    color: appConfigStyle.settingsPageColor
+                      ? '#444444'
+                      : this.props.themeStyle.textColor,
+                    fontSize: appTextStyle.mediumSize,
                     fontFamily: appTextStyle.fontFamily,
-                    paddingLeft: 5,
-                    paddingRight: 5
-                  }}></Text>
+                  }}>
+                  {this.props.language['Help & info']}
+                </Text>
+
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                  }}>
+                  <Text
+                    style={{
+                      color: appConfigStyle.settingsPageColor
+                        ? '#444444'
+                        : this.props.themeStyle.textColor,
+                      fontSize: appTextStyle.smallSize,
+                      fontFamily: appTextStyle.fontFamily,
+                      paddingLeft: 5,
+                      paddingRight: 5,
+                    }}
+                  />
                 </View>
               </TouchableOpacity>
 
-              <View style={{
-                width: '100%',
-                flexDirection: 'row',
-                justifyContent: 'space-around',
-                alignItems: 'center',
-                marginTop: 5,
-                marginBottom: '4%',
-                marginLeft: 10
-              }}>
+              <View
+                style={{
+                  width: '100%',
+                  flexDirection: 'row',
+                  justifyContent: 'space-around',
+                  alignItems: 'center',
+                  marginTop: 5,
+                  marginBottom: '4%',
+                  marginLeft: 10,
+                }}>
                 <TouchableOpacity
                   onPress={() => {
-                    if (Object.keys(this.props.userData).length !== 0) { this.props.navigation.navigate('MyAccountScreen') } else {
-                      this.props.navigation.navigate('LOGIN')
+                    if (Object.keys(this.props.userData).length !== 0) {
+                      this.props.navigation.navigate('MyAccountScreen');
+                    } else {
+                      this.props.navigation.navigate('LOGIN');
                     }
                   }}
-                  style={{ justifyContent: 'center', alignItems: 'center' }}>
-
+                  style={{justifyContent: 'center', alignItems: 'center'}}>
                   <Ionicons
                     name={'md-call-outline'}
                     style={{
-                      color: appConfigStyle.settingsPageColor ? '#444444' : this.props.themeStyle.textColor,
+                      color: appConfigStyle.settingsPageColor
+                        ? '#444444'
+                        : this.props.themeStyle.textColor,
                       fontSize: appTextStyle.largeSize + 12,
                       alignSelf: 'center',
-                      paddingVertical: 1
+                      paddingVertical: 1,
                     }}
                   />
-                  <Text style={{
-                    color: appConfigStyle.settingsPageColor ? '#444444' : this.props.themeStyle.textColor,
-                    fontSize: appTextStyle.mediumSize,
-                    fontFamily: appTextStyle.fontFamily
-                  }}>{this.props.isLoading.appConfig.languageJson['Edit Profile']}</Text>
+                  <Text
+                    style={{
+                      color: appConfigStyle.settingsPageColor
+                        ? '#444444'
+                        : this.props.themeStyle.textColor,
+                      fontSize: appTextStyle.mediumSize,
+                      fontFamily: appTextStyle.fontFamily,
+                    }}>
+                    {
+                      this.props.isLoading.appConfig.languageJson[
+                        'Edit Profile'
+                      ]
+                    }
+                  </Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={{
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  marginLeft: 9
-                }}
+                <TouchableOpacity
+                  style={{
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    marginLeft: 9,
+                  }}
                   onPress={() => {
-                    if (Object.keys(this.props.userData).length !== 0) { this.props.navigation.navigate('AdressesScreen') } else {
-                      this.props.navigation.navigate('LOGIN')
+                    if (Object.keys(this.props.userData).length !== 0) {
+                      this.props.navigation.navigate('AdressesScreen');
+                    } else {
+                      this.props.navigation.navigate('LOGIN');
                     }
                   }}>
                   <Ionicons
                     name={'location-outline'}
                     style={{
-                      color: appConfigStyle.settingsPageColor ? '#444444' : this.props.themeStyle.textColor,
+                      color: appConfigStyle.settingsPageColor
+                        ? '#444444'
+                        : this.props.themeStyle.textColor,
                       fontSize: appTextStyle.largeSize + 12,
                       alignSelf: 'center',
-                      paddingVertical: 1
+                      paddingVertical: 1,
                     }}
                   />
-                  <Text style={{
-                    color: appConfigStyle.settingsPageColor ? '#444444' : this.props.themeStyle.textColor,
-                    fontSize: appTextStyle.mediumSize,
-                    fontFamily: appTextStyle.fontFamily
-                  }}>{this.props.isLoading.appConfig.languageJson.Address}</Text>
+                  <Text
+                    style={{
+                      color: appConfigStyle.settingsPageColor
+                        ? '#444444'
+                        : this.props.themeStyle.textColor,
+                      fontSize: appTextStyle.mediumSize,
+                      fontFamily: appTextStyle.fontFamily,
+                    }}>
+                    {this.props.isLoading.appConfig.languageJson.Address}
+                  </Text>
                 </TouchableOpacity>
                 <TouchableOpacity
-                  style={{ justifyContent: 'center', alignItems: 'center' }}
+                  style={{justifyContent: 'center', alignItems: 'center'}}
                   onPress={() => {
-                    if (Object.keys(this.props.userData).length !== 0) { this.props.navigation.navigate('RewardPoints') } else {
-                      this.props.navigation.navigate('LOGIN')
+                    if (Object.keys(this.props.userData).length !== 0) {
+                      this.props.navigation.navigate('RewardPoints');
+                    } else {
+                      this.props.navigation.navigate('LOGIN');
                     }
                   }}>
                   <Ionicons
                     name={'gift-outline'}
                     style={{
-                      color: appConfigStyle.settingsPageColor ? '#444444' : this.props.themeStyle.textColor,
+                      color: appConfigStyle.settingsPageColor
+                        ? '#444444'
+                        : this.props.themeStyle.textColor,
                       fontSize: appTextStyle.largeSize + 12,
                       alignSelf: 'center',
-                      paddingVertical: 1
+                      paddingVertical: 1,
                     }}
                   />
-                  <Text style={{
-                    color: appConfigStyle.settingsPageColor ? '#444444' : this.props.themeStyle.textColor,
-                    fontSize: appTextStyle.mediumSize,
-                    fontFamily: appTextStyle.fontFamily
-                  }}>{this.props.isLoading.appConfig.languageJson['Reward Points']}</Text>
+                  <Text
+                    style={{
+                      color: appConfigStyle.settingsPageColor
+                        ? '#444444'
+                        : this.props.themeStyle.textColor,
+                      fontSize: appTextStyle.mediumSize,
+                      fontFamily: appTextStyle.fontFamily,
+                    }}>
+                    {
+                      this.props.isLoading.appConfig.languageJson[
+                        'Reward Points'
+                      ]
+                    }
+                  </Text>
                 </TouchableOpacity>
-
               </View>
-              <View style={{
-                width: '100%',
-                flexDirection: 'row',
-                justifyContent: 'space-around',
-                alignItems: 'center',
-                marginTop: 5,
-                marginBottom: 12
-              }}>
+              <View
+                style={{
+                  width: '100%',
+                  flexDirection: 'row',
+                  justifyContent: 'space-around',
+                  alignItems: 'center',
+                  marginTop: 5,
+                  marginBottom: 12,
+                }}>
                 <TouchableOpacity
-                  style={{ justifyContent: 'center', alignItems: 'center' }}
+                  style={{justifyContent: 'center', alignItems: 'center'}}
                   onPress={() => {
-                    if (Object.keys(this.props.userData).length !== 0) { this.props.navigation.navigate('ContactUsScreen') } else {
-                      this.props.navigation.navigate('LOGIN')
+                    if (Object.keys(this.props.userData).length !== 0) {
+                      this.props.navigation.navigate('ContactUsScreen');
+                    } else {
+                      this.props.navigation.navigate('LOGIN');
                     }
                   }}>
                   <Ionicons
                     name={'chatbox-outline'}
                     style={{
-                      color: appConfigStyle.settingsPageColor ? '#444444' : this.props.themeStyle.textColor,
+                      color: appConfigStyle.settingsPageColor
+                        ? '#444444'
+                        : this.props.themeStyle.textColor,
                       fontSize: appTextStyle.largeSize + 12,
                       alignSelf: 'center',
-                      paddingVertical: 1
+                      paddingVertical: 1,
                     }}
                   />
-                  <Text style={{
-                    color: appConfigStyle.settingsPageColor ? '#444444' : this.props.themeStyle.textColor,
-                    fontSize: appTextStyle.mediumSize,
-                    fontFamily: appTextStyle.fontFamily
-                  }}>{this.props.isLoading.appConfig.languageJson['Contact Us']}</Text>
+                  <Text
+                    style={{
+                      color: appConfigStyle.settingsPageColor
+                        ? '#444444'
+                        : this.props.themeStyle.textColor,
+                      fontSize: appTextStyle.mediumSize,
+                      fontFamily: appTextStyle.fontFamily,
+                    }}>
+                    {this.props.isLoading.appConfig.languageJson['Contact Us']}
+                  </Text>
                 </TouchableOpacity>
 
                 <TouchableOpacity
@@ -1012,100 +1149,114 @@ class CreateAccount extends Component {
                     justifyContent: 'center',
                     alignItems: 'center',
                     marginRight: 2,
-                    marginBottom: 9
+                    marginBottom: 9,
                   }}>
                   <RateUsButton
                     text={'text'}
                     iconName={'md-star-half'}
-                    iconColor={appConfigStyle.settingsPageColor ? '#444444' : this.props.themeStyle.textColor}
+                    iconColor={
+                      appConfigStyle.settingsPageColor
+                        ? '#444444'
+                        : this.props.themeStyle.textColor
+                    }
                   />
-
                 </TouchableOpacity>
                 <TouchableOpacity
                   style={{
                     justifyContent: 'center',
                     alignItems: 'center',
                     marginRight: 0,
-                    marginBottom: 18
-
+                    marginBottom: 18,
                   }}>
-                  <ShoppingCartIcon iconColor={appConfigStyle.settingsPageColor ? '#444444' : this.props.themeStyle.textColor} navigation={this.props.navigation} />
-
+                  <ShoppingCartIcon
+                    iconColor={
+                      appConfigStyle.settingsPageColor
+                        ? '#444444'
+                        : this.props.themeStyle.textColor
+                    }
+                    navigation={this.props.navigation}
+                  />
                 </TouchableOpacity>
               </View>
 
-              <View style={{
-                width: '100%',
-                flexDirection: 'row',
-                justifyContent: 'flex-start',
-                alignItems: 'center',
-                marginTop: 5,
-                marginBottom: 12,
-                paddingHorizontal: 46
-              }}>
+              <View
+                style={{
+                  width: '100%',
+                  flexDirection: 'row',
+                  justifyContent: 'flex-start',
+                  alignItems: 'center',
+                  marginTop: 5,
+                  marginBottom: 12,
+                  paddingHorizontal: 46,
+                }}>
                 <TouchableOpacity
-                  style={{ justifyContent: 'center', alignItems: 'center' }}
+                  style={{justifyContent: 'center', alignItems: 'center'}}
                   onPress={() => {
-                    if (Object.keys(this.props.userData).length !== 0) { this.props.navigation.navigate('WalletScreen') } else {
-                      this.props.navigation.navigate('LOGIN')
+                    if (Object.keys(this.props.userData).length !== 0) {
+                      this.props.navigation.navigate('WalletScreen');
+                    } else {
+                      this.props.navigation.navigate('LOGIN');
                     }
                   }}>
                   <Ionicons
                     name={'wallet-outline'}
                     style={{
-                      color: appConfigStyle.settingsPageColor ? '#444444' : this.props.themeStyle.textColor,
+                      color: appConfigStyle.settingsPageColor
+                        ? '#444444'
+                        : this.props.themeStyle.textColor,
                       fontSize: appTextStyle.largeSize + 12,
                       alignSelf: 'center',
-                      paddingVertical: 1
+                      paddingVertical: 1,
                     }}
                   />
-                  <Text style={{
-                    color: appConfigStyle.settingsPageColor ? '#444444' : this.props.themeStyle.textColor,
-                    fontSize: appTextStyle.mediumSize,
-                    fontFamily: appTextStyle.fontFamily
-                  }}>{this.props.isLoading.appConfig.languageJson.Wallet}</Text>
+                  <Text
+                    style={{
+                      color: appConfigStyle.settingsPageColor
+                        ? '#444444'
+                        : this.props.themeStyle.textColor,
+                      fontSize: appTextStyle.mediumSize,
+                      fontFamily: appTextStyle.fontFamily,
+                    }}>
+                    {this.props.isLoading.appConfig.languageJson.Wallet}
+                  </Text>
                 </TouchableOpacity>
-
               </View>
             </View>
-
           </View>
-
         </ScrollView>
-
       </View>
-    )
+    );
   }
 }
 
-const getTheme = (state) => state.appConfig.themeStyle
-const getUserData = (state) => state.userData.user
-const getLanguage = (state) => state.appConfig.languageJson
-const getSettings = (state) => state.settingsCall.settings
+const getTheme = state => state.appConfig.themeStyle;
+const getUserData = state => state.userData.user;
+const getLanguage = state => state.appConfig.languageJson;
+const getSettings = state => state.settingsCall.settings;
 const getSettingsFun = createSelector(
   [getSettings],
-  (getSettings) => {
-    return getSettings
-  }
-)
+  getSettings => {
+    return getSettings;
+  },
+);
 const getUserDataFun = createSelector(
   [getUserData],
-  (getUserData) => {
-    return getUserData
-  }
-)
+  getUserData => {
+    return getUserData;
+  },
+);
 const getThemeFun = createSelector(
   [getTheme],
-  (getTheme) => {
-    return getTheme
-  }
-)
+  getTheme => {
+    return getTheme;
+  },
+);
 const getLanguageFun = createSelector(
   [getLanguage],
-  (getLanguage) => {
-    return getLanguage
-  }
-)
+  getLanguage => {
+    return getLanguage;
+  },
+);
 /// ///////////////////////////////////////////////
 const mapStateToProps = state => {
   return {
@@ -1114,19 +1265,21 @@ const mapStateToProps = state => {
     isLoading: state,
     isDarkMode: state.appConfig.isDarkMode,
     language: getLanguageFun(state),
-    settings: getSettingsFun(state)
-
-  }
-}
+    settings: getSettingsFun(state),
+  };
+};
 const mapDispatchToProps = dispatch => ({
-  logOutCall: (th) => {
+  logOutCall: th => {
     dispatch(async dispatch => {
-      await logOut(dispatch, th)
-    })
+      await logOut(dispatch, th);
+    });
   },
-  setModeValue: (id) => dispatch(setModeValue(id))
-})
-export default connect(mapStateToProps, mapDispatchToProps)(CreateAccount)
+  setModeValue: id => dispatch(setModeValue(id)),
+});
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(CreateAccount);
 
 const styles = StyleSheet.create({
   textImageContainer: {
@@ -1138,10 +1291,10 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 15,
     paddingTop: 20,
-    flexDirection: 'row'
+    flexDirection: 'row',
   },
   modalContainer: {
-    flex: 1
+    flex: 1,
   },
   tabComponents: {
     flex: 1,
@@ -1149,6 +1302,6 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     padding: 10,
     alignItems: 'center',
-    paddingLeft: 13
-  }
-})
+    paddingLeft: 13,
+  },
+});

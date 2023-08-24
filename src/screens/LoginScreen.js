@@ -96,6 +96,7 @@ class Login extends PureComponent {
       /// ////
 
       firstNameSignUp: '',
+      lastNameSignUp: '',
       mobileNumber: '',
       userNamesignUp: '',
       email: '',
@@ -204,6 +205,22 @@ class Login extends PureComponent {
   //  }
 
   // Somewhere in your code
+  // signInFun = () => {
+  //   this.setState(
+  //     {
+  //       spinnerTemp: true,
+  //     },
+  //     () => {
+  //       this.props.signInCall(
+  //         this.state.emailSignIn,
+  //         this.state.passwordSignIn,
+  //         this.props.sessionId,
+  //         this,
+  //       );
+  //     },
+  //   );
+  // };
+
   signInFun = () => {
     this.setState(
       {
@@ -289,6 +306,27 @@ class Login extends PureComponent {
   };
 
   /// ///////////////////////////////////////////////////
+  // createAccountSignUp () {
+  //   this.setState(
+  //     {
+  //       spinnerTemp: true,
+  //     },
+  //     () => {
+  //       this.props.signUpCall(
+  //         this.state.firstNameSignUp,
+  //         this.state.lastNameSignUp,
+  //         this,
+  //         // this.state.mobileNumber,
+  //         this.state.this.state.emailSignUp,
+  //         this.state.passwordSignUp,
+  //         this.state.confirmPasswordSignUp,
+  //         // this.state.genderSelect,
+  //         this.props.sessionId,
+  //       );
+  //     },
+  //   );
+  // }
+
   createAccountSignUp() {
     this.setState(
       {
@@ -297,11 +335,10 @@ class Login extends PureComponent {
       () => {
         this.props.signUpCall(
           this.state.firstNameSignUp,
-          this.state.mobileNumber,
+          this.state.lastNameSignUp,
           this.state.emailSignUp,
           this.state.passwordSignUp,
           this.state.confirmPasswordSignUp,
-          this.state.genderSelect,
           this,
           this.props.sessionId,
         );
@@ -592,7 +629,11 @@ class Login extends PureComponent {
                     // placeholder={this.props.language['First Name']}
                     placeholder="Full Name"
                     onChangeText={firstNameSignUp =>
-                      this.setState({firstNameSignUp, errorMessageSignUp: ''})
+                      this.setState({
+                        firstNameSignUp,
+                        errorMessageSignUp: '',
+                        lastNameSignUp: firstNameSignUp,
+                      })
                     }
                     value={this.state.firstNameSignUp}
                   />
@@ -1328,11 +1369,12 @@ class Login extends PureComponent {
 const mapDispatchToProps = dispatch => ({
   signUpCall: (
     firstNameSignUp,
-    mobileNumber,
+    lastNameSignUp,
+    // mobileNumber,
     emailSignUp,
     passwordSignUp,
     confirmPasswordSignUp,
-    genderSelect,
+    // genderSelect,
     th,
     sessionId,
   ) => {
@@ -1340,16 +1382,22 @@ const mapDispatchToProps = dispatch => ({
       await signUp(
         dispatch,
         firstNameSignUp,
-        mobileNumber,
+        lastNameSignUp,
+        // mobileNumber,
         emailSignUp,
         passwordSignUp,
         confirmPasswordSignUp,
-        genderSelect,
+        // genderSelect,
         th,
         sessionId,
       );
     });
   },
+  // signInCall: (emailSignIn, passwordSignIn, sessionId, th) => {
+  //   dispatch(async dispatch => {
+  //     await signIn(dispatch, emailSignIn, passwordSignIn, sessionId, th);
+  //   });
+  // },
   signInCall: (emailSignIn, passwordSignIn, sessionId, th) => {
     dispatch(async dispatch => {
       await signIn(dispatch, emailSignIn, passwordSignIn, sessionId, th);

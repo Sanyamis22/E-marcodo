@@ -360,6 +360,42 @@ export function socialLogin (dispatch, url, th) {
   })
 }
 
+// export function signIn (dispatch, emailSignIn, passwordSignIn,
+//   sessionId, th) {
+//   dispatch(async dispatch => {
+//     const obj = {}
+//     obj.email = emailSignIn
+//     obj.password = passwordSignIn
+//     obj.session_id = sessionId
+//     const json = await postHttp(getUrl() + 'customer_login', obj)
+//     if (json.status === 'success') {
+//       if (json.data.status === 'Success') {
+//         th.setState({
+//           spinnerTemp: false,
+//           emailSignIn: '',
+//           passwordSignIn: ''
+//         }, () => { th.props.navigation.pop() })
+//         dispatch({
+//           type: REGISTER_USER,
+//           payload: json.data.data,
+//           dispatch
+//         })
+//         getCartProductsQuantity(dispatch, '', th,
+//           json.data.data, false)
+//         getWishlist(dispatch)
+//       } else {
+//         th.toast.show(json.data.message)
+//       }
+//     } else {
+//       th.toast.show(json.data.data.message)
+//     }
+
+//     th.setState({
+//       spinnerTemp: false
+//     })
+//   })
+// }
+
 export function signIn (dispatch, emailSignIn, passwordSignIn,
   sessionId, th) {
   dispatch(async dispatch => {
@@ -395,6 +431,7 @@ export function signIn (dispatch, emailSignIn, passwordSignIn,
     })
   })
 }
+
 
 export function signUp (dispatch, firstNameSignUp,
   lastNameSignUp,

@@ -183,13 +183,35 @@ class Category3 extends PureComponent {
             source={require('../images/newImages/mrcado.jpg')}
             style={styles.headerImg}
           />
-          <Text style={styles.accountTxt}>Account</Text>
-          <Text style={styles.signTxt}>
-            Login/Sign in for the best experience
-          </Text>
-          <TouchableOpacity style={styles.loginBtn}>
-            <Text style={styles.loginTxt}>Log in</Text>
-          </TouchableOpacity>
+          {/* {this.props.userData !== undefined && (
+            <>
+              <Text style={styles.accountTxt}>Account</Text>
+              <Text style={styles.signTxt}>
+                Login/Sign in for the best experience
+              </Text>
+              <TouchableOpacity
+                style={styles.loginBtn}
+                onPress={() => this.props.navigation.navigate('LOGIN')}>
+                <Text style={styles.loginTxt}>Log in</Text>
+              </TouchableOpacity>
+            </>
+          )} */}
+          {this.props.userData !== undefined ? (
+            Object.keys(this.props.userData).length === 0 ? (
+              <>
+                <Text style={styles.accountTxt}>Account</Text>
+                <Text style={styles.signTxt}>
+                  Login/Sign in for the best experience
+                </Text>
+                <TouchableOpacity
+                  style={styles.loginBtn}
+                  onPress={() => this.props.navigation.navigate('LOGIN')}>
+                  <Text style={styles.loginTxt}>Log in</Text>
+                </TouchableOpacity>
+              </>
+            ) : null
+          ) : null}
+
           <ScrollView style={styles.cateContainer}>
             {this.props.sortCategory
               .reduce((acc, curr) => {
@@ -274,8 +296,17 @@ class Category3 extends PureComponent {
 /// ///////////////////////////////////////////////
 /// ///////////////////////////////////////////////
 const getTheme = state => state.appConfig.themeStyle;
+const getUserData = state => state.userData.user;
 const getLanguage = state => state.appConfig.languageJson;
 const getCategories = state => state.getCategories.sortCategory;
+
+const getUserDataFun = createSelector(
+  [getUserData],
+  getUserData => {
+    return getUserData;
+  },
+);
+
 const getThemeFun = createSelector(
   [getTheme],
   getTheme => {
@@ -297,6 +328,7 @@ const getLanguageFun = createSelector(
 const mapStateToProps = state => ({
   themeStyle: getThemeFun(state),
   language: getLanguageFun(state),
+  userData: getUserDataFun(state),
   sortCategory: getCategoriesFun(state),
 });
 /// //////////////////////////////////////////
